@@ -62,58 +62,85 @@
 
 /* =====================================================================
    3. DOCK  (#desk-dock — the 56px icon rail)
-   Variables are scoped to #desk-dock so nothing outside it changes.
-   (The user menu opens on <body>, outside the dock — unaffected.)
+   Frappe variables are re-scoped on #desk-dock only, so nothing outside
+   the dock changes (the user menu and panels open outside it).
+   States covered (from desk.bundle.css):
+     .dock-item:hover                      → --surface-gray-2 / --dock-ink-hover
+     .dock-item.active                     → --surface-elevation-3 / --dock-ink-active
+     .dock-utilities .dock-item:hover      → --surface-gray-3 / --ink-gray-8
+     .dock-utilities .dock-item[aria-expanded="true"] → --surface-elevation-3
+     .dock-item:focus-visible              → --outline-gray-4
+     .dock .dock-logo / .dock-utilities    → --outline-gray-1 (dividers)
    ===================================================================== */
 #desk-dock {
-	--dock-bg: var(--iisc-navy);              /* solid fallback, also used by the dot border */
+	--dock-bg: var(--iisc-navy);
 	--dock-ink: var(--iisc-on-dark);
 	--dock-ink-hover: #ffffff;
-	--dock-ink-active: var(--iisc-navy);      /* icon colour on the white active tile */
-	--surface-gray-2: var(--iisc-on-dark-hover);  /* .dock-item:hover */
-	--surface-gray-3: var(--iisc-on-dark-hover);  /* utility item hover */
-	--surface-elevation-3: #ffffff;           /* active tile */
-	--outline-gray-1: var(--iisc-on-dark-line);   /* logo + utilities dividers */
-	--ink-gray-8: #ffffff;                    /* search / notifications / flow icons */
+	--dock-ink-active: var(--iisc-navy);
+	--surface-gray-2: var(--iisc-on-dark-hover);
+	--surface-gray-3: var(--iisc-on-dark-hover);
+	--surface-elevation-3: #ffffff;
+	--outline-gray-1: var(--iisc-on-dark-line);
+	--outline-gray-4: rgba(255, 255, 255, 0.6);
+	--ink-gray-8: #ffffff;
 	background-image: var(--iisc-gradient);
+}
+
+/* Utility button (search / notifications / flow) while its panel is open:
+   white tile → navy icon */
+#desk-dock .dock-utilities .dock-item[aria-expanded="true"] {
+	color: var(--iisc-navy);
 }
 
 /* =====================================================================
    4. MODULE SIDEBAR  (.body-sidebar)
+   States covered (from desk.bundle.css):
+     .shell-header:hover / .hover          → --surface-gray-3
+     .shell-header.active-sidebar (open)   → --surface-elevation-2
+     .shell-header:hover .drop-icon        → --ink-gray-8
+     item :hover                           → --surface-gray-2
+     .active-sidebar                       → --surface-elevation-3
+     user button :hover / .user-menu-active → --surface-gray-2
+     .indent + .nested-container line      → --outline-gray-1
+     .divider                              → --outline-gray-2
+     .section-break                        → --ink-gray-5 !important
+     collapsed: parent of hidden active    → --surface-elevation-3 / --ink-gray-8
    ===================================================================== */
 .body-sidebar {
 	--desk-sidebar-bg: var(--iisc-navy);
-	--outline-gray-1: var(--iisc-on-dark-line);   /* right border */
-	--outline-gray-2: var(--iisc-on-dark-line);   /* .divider */
+	--surface-gray-2: var(--iisc-on-dark-hover);
+	--surface-gray-3: var(--iisc-on-dark-hover);
+	--surface-elevation-2: rgba(255, 255, 255, 0.18);
+	--surface-elevation-3: #ffffff;
+	--outline-gray-1: var(--iisc-on-dark-line);
+	--outline-gray-2: var(--iisc-on-dark-line);
 	background-image: var(--iisc-gradient);
 }
 
-/* Module title in the sidebar header */
+/* Header: module name + chevron (normal, hover, open) */
 .body-sidebar .shell-header .header-title,
-.body-sidebar .sidebar-header .drop-icon {
+.body-sidebar .shell-header .drop-icon,
+.body-sidebar .shell-header:hover .drop-icon {
 	color: #ffffff;
 }
 
-/* Items (icons follow currentColor) */
+/* Items — icons follow currentColor */
 .body-sidebar .standard-sidebar-item .item-anchor {
 	color: var(--iisc-on-dark);
-}
-
-/* Hover — same selector as Frappe, loads later so it wins */
-.body-sidebar .standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover {
-	background-color: var(--iisc-on-dark-hover);
 }
 
 .body-sidebar .standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover .item-anchor {
 	color: #ffffff;
 }
 
-/* Active item — white pill, navy text */
-.body-sidebar .active-sidebar {
-	background-color: #ffffff;
+/* Section labels */
+.body-sidebar .section-break {
+	color: rgba(255, 255, 255, 0.55) !important;
 }
 
-.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
+/* Active item — white pill, navy text (expanded + collapsed variants) */
+.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor,
+.body-sidebar-container:not(.expanded) .sidebar-item-container:has(> .nested-container.hidden .active-sidebar) > .standard-sidebar-item .item-anchor {
 	color: var(--iisc-navy);
 }
 
@@ -127,25 +154,72 @@
 }
 
 /* =====================================================================
-   5. IISc FOOTER
-   Rendered into v16's native <footer> inside .main-section, so it spans
-   the full content area. Shown on list / form / report / dashboard;
-   hidden by JS on the Apps screen and Workspaces (see bundle.js).
-   The footer is our own element — no Frappe layout is changed.
+   5. IISc FOOTER — pinned to the bottom of the screen on every Desk page
+   Our own element (appended to <body>). JS keeps its left/width aligned
+   to .main-section (follows sidebar collapse/expand), lifts it above the
+   v16 mobile bottom nav, and sets --iisc-footer-h so .main-section gets
+   matching bottom padding (last rows never hide behind the footer).
    ===================================================================== */
 .iisc-footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 10;
 	background: var(--iisc-navy);
 	color: #ffffff;
-	padding: 12px 20px;
+	padding: 10px 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 16px;
 	flex-wrap: wrap;
 	font-size: 12px;
+	box-sizing: border-box;
 }
 
 .iisc-footer img {
-	height: 24px;
+	height: 22px;
 	width: auto;
+}
+
+body.iisc-footer-on .main-section {
+	padding-bottom: var(--iisc-footer-h, 0px);
+}
+
+/* Workspaces: Frappe core fixes
+   [data-page-route="Workspaces"] .layout-main { height: calc(100vh - …) }
+   and the cards overflow it, so .main-section padding doesn't cover them.
+   A spacer at the end of the cards keeps the last card above the footer
+   (pseudo-element — Frappe's own padding/height are untouched). */
+body.iisc-footer-on [data-page-route="Workspaces"] .layout-main-section::after {
+	content: "";
+	display: block;
+	height: var(--iisc-footer-h, 0px);
+}
+
+/* Overlay behind dialogs + Ctrl+K command palette.
+   Frappe: .modal-backdrop { background-color: var(--gray-800) }, .show { opacity: 0.8 } */
+.modal-backdrop {
+	background-color: var(--iisc-navy);
+}
+
+.modal-backdrop.show {
+	opacity: 0.6;
+}
+
+/* Frappe's form "scroll to top" button is pinned at bottom: 20px (z 1030)
+   and would sit on top of the IISc footer — removed. */
+.form-footer .scroll-to-top {
+	display: none !important;
+}
+
+/* Phones/tablets (<768px): v16 shows its own bottom nav — no footer there */
+@media (max-width: 767.98px) {
+	.iisc-footer {
+		display: none !important;
+	}
+
+	body.iisc-footer-on .main-section {
+		padding-bottom: 0;
+	}
 }
