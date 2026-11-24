@@ -1,37 +1,45 @@
 // =====================================================================
-// IISc Theme — Frappe v16 Desk
+// IISc Theme — Frappe v16 (16.60) Desk
+//
+// Footer is rendered into v16's native <footer> inside .main-section
+// (full content width, one instance, outside individual pages).
+//
+// Hidden on:
+//   - Apps screen  (route [""])
+//   - Workspaces   (route ["Workspaces", ...]) — Frappe core fixes
+//     [data-page-route="Workspaces"] .layout-main to 100vh and lets the
+//     cards overflow, so a footer there would sit behind the cards.
+// Verified on iiscdemo.frappe.cloud: list, form, report, dashboard OK.
 // =====================================================================
 
-// ---------- 1. Load Source Sans 3 font (once) ----------
-(function loadIIScFont() {
-	if (document.getElementById("iisc-font")) return;
-	const link = document.createElement("link");
-	link.id = "iisc-font";
-	link.rel = "stylesheet";
-	link.href =
-		"https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap";
-	document.head.appendChild(link);
-})();
+const IISC_HIDE_FOOTER_ON = ["", "desktop", "workspaces"];
 
-// ---------- 2. IISc footer ----------
-function iiscRenderFooter() {
-	// Frappe keeps old pages hidden in the DOM — target only the current page
-	const page = window.frappe && frappe.container && frappe.container.page;
-	if (!page) return;
-	const main = page.querySelector(".layout-main-section-wrapper") || page;
-	if (main.querySelector(".iisc-footer")) return;
-
-	const footer = document.createElement("div");
-	footer.className = "iisc-footer";
-	footer.innerHTML = `
-		<span>© ${new Date().getFullYear()} Indian Institute of Science, Bengaluru | Design: ITChamps</span>
-		<img src="/assets/iisc_theme/images/iisc-logo.svg" alt="IISc" onerror="this.style.display='none'">
-	`;
-	main.appendChild(footer);
+function iiscFooterAllowed() {
+	const route = (window.frappe && frappe.get_route && frappe.get_route()) || [""];
+	const first = String(route[0] || "").toLowerCase();
+	return !IISC_HIDE_FOOTER_ON.includes(first);
 }
 
-$(document).ready(() => setTimeout(iiscRenderFooter, 300));
+function iiscRenderFooter() {
+	const host = document.querySelector(".main-section > footer");
+	if (!host) return;
+
+	let footer = host.querySelector(".iisc-footer");
+	if (!footer) {
+		footer = document.createElement("div");
+		footer.className = "iisc-footer";
+		footer.innerHTML = `
+			<span>© ${new Date().getFullYear()} Indian Institute of Science, Bengaluru | Design: ITChamps</span>
+			<img src="/assets/iisc_theme/images/iisc-logo.svg" alt="IISc" onerror="this.style.display='none'">
+		`;
+		host.appendChild(footer);
+	}
+
+	footer.style.display = iiscFooterAllowed() ? "" : "none";
+}
+
+$(document).ready(() => setTimeout(iiscRenderFooter, 200));
 
 if (window.frappe && frappe.router) {
-	frappe.router.on("change", () => setTimeout(iiscRenderFooter, 300));
+	frappe.router.on("change", () => setTimeout(iiscRenderFooter, 200));
 }
