@@ -156,9 +156,8 @@
 /* =====================================================================
    5. IISc FOOTER — pinned to the bottom of the screen on every Desk page
    Our own element (appended to <body>). JS keeps its left/width aligned
-   to .main-section (follows sidebar collapse/expand), lifts it above the
-   v16 mobile bottom nav, and sets --iisc-footer-h so .main-section gets
-   matching bottom padding (last rows never hide behind the footer).
+   to .main-section (follows sidebar collapse/expand) and sets
+   --iisc-footer-h, which shortens .main-section by the footer height.
    ===================================================================== */
 .iisc-footer {
 	position: fixed;
@@ -182,19 +181,12 @@
 	width: auto;
 }
 
+/* Reserve the footer's height by shortening Frappe's scroll area.
+   Frappe: .main-section { height: 100dvh }. Frappe's list view sizes
+   .result-container from .main-section's height (set_result_height), so
+   lists, Load More and workspaces all end exactly above the footer. */
 body.iisc-footer-on .main-section {
-	padding-bottom: var(--iisc-footer-h, 0px);
-}
-
-/* Workspaces: Frappe core fixes
-   [data-page-route="Workspaces"] .layout-main { height: calc(100vh - …) }
-   and the cards overflow it, so .main-section padding doesn't cover them.
-   A spacer at the end of the cards keeps the last card above the footer
-   (pseudo-element — Frappe's own padding/height are untouched). */
-body.iisc-footer-on [data-page-route="Workspaces"] .layout-main-section::after {
-	content: "";
-	display: block;
-	height: var(--iisc-footer-h, 0px);
+	height: calc(100dvh - var(--iisc-footer-h, 0px));
 }
 
 /* Overlay behind dialogs + Ctrl+K command palette.
@@ -205,6 +197,125 @@ body.iisc-footer-on [data-page-route="Workspaces"] .layout-main-section::after {
 
 .modal-backdrop.show {
 	opacity: 0.6;
+}
+
+/* Ctrl+K command palette: hide the scrollbar (list still scrolls with wheel/keys).
+   .navbar-modal-wrap only exists in the palette, not other autocompletes. */
+.navbar-modal-wrap .awesomplete > [role="listbox"] {
+	scrollbar-width: none;
+}
+
+.navbar-modal-wrap .awesomplete > [role="listbox"]::-webkit-scrollbar {
+	display: none;
+}
+
+/* =====================================================================
+   6. DROPDOWN MENUS — IISc website style
+   Measured on iisc.ac.in: menu items bg #108896 (teal), text #ffffff.
+   Item hover: IISc navy #1B374C (their header colour — the site's own
+   hover could not be measured, it is JS-driven).
+   Colours set directly on menu parts (not via shared variables), so any
+   input inside a menu keeps Frappe's normal input colours.
+   ===================================================================== */
+
+/* --- 6a. Espresso menus (.es-menu): user menu, sidebar header menu,
+       v16 "…" menus. Rules mirrored from desk.bundle.css. --- */
+.es-menu {
+	background: var(--iisc-teal);
+}
+
+.es-menu__group + .es-menu__group {
+	border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+.es-menu__group-label,
+.es-menu__description,
+.es-menu__empty,
+.es-menu__loading {
+	color: rgba(255, 255, 255, 0.75);
+}
+
+.es-menu__item,
+.es-menu__item:hover {
+	color: #ffffff;
+}
+
+.es-menu__item > svg,
+.es-menu__chevron,
+.es-menu__shortcut,
+.es-menu__shortcut kbd {
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.es-menu__item[data-highlighted],
+.es-menu__item[data-state="open"] {
+	background: var(--iisc-navy);
+}
+
+.es-menu__item[data-state="checked"] {
+	background: rgba(255, 255, 255, 0.18);
+	color: #ffffff;
+}
+
+.es-menu__item[data-state="checked"][data-highlighted] {
+	background: var(--iisc-navy);
+}
+
+.es-menu__item[data-theme="red"],
+.es-menu__item[data-theme="red"]:hover,
+.es-menu__item[data-theme="red"] > svg {
+	color: #ffd0c7;
+}
+
+.es-menu__item[data-theme="red"][data-highlighted] {
+	background: var(--iisc-navy);
+}
+
+.es-menu__item[data-disabled],
+.es-menu__item:disabled,
+.es-menu__item[data-disabled] > svg,
+.es-menu__item:disabled > svg {
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.es-menu__letter {
+	background: rgba(255, 255, 255, 0.18);
+	color: #ffffff;
+}
+
+/* --- 6b. Bootstrap menus (.dropdown-menu): list/form action menus. --- */
+.dropdown-menu {
+	background-color: var(--iisc-teal);
+	border-color: var(--iisc-teal);
+}
+
+.dropdown-menu .dropdown-item,
+.dropdown-menu .dropdown-item-text {
+	color: #ffffff;
+	--icon-stroke: #ffffff;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item.active,
+.dropdown-menu .dropdown-item:active {
+	background-color: var(--iisc-navy);
+	color: #ffffff;
+	--icon-stroke: #ffffff;
+}
+
+.dropdown-menu .dropdown-item.disabled,
+.dropdown-menu .dropdown-item:disabled {
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.dropdown-menu .dropdown-header {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.dropdown-menu .dropdown-divider,
+.dropdown-menu .divider {
+	border-top-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Frappe's form "scroll to top" button is pinned at bottom: 20px (z 1030)
@@ -220,6 +331,6 @@ body.iisc-footer-on [data-page-route="Workspaces"] .layout-main-section::after {
 	}
 
 	body.iisc-footer-on .main-section {
-		padding-bottom: 0;
+		height: 100dvh;
 	}
 }
