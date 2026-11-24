@@ -445,13 +445,234 @@ body {
 }
 
 /* =====================================================================
-   8. HR DASHBOARD on the Apps screen (rendered by bundle.js)
-   Style modelled on the iEmpPower dashboard, in IISc colours.
+   8. IISc HR HOME on the Apps screen (/desk) — rendered by bundle.js
+   Modelled on the iEmpPower dashboard, in IISc colours.
+   Frappe's icon grid (.desktop-container) is hidden while .iisc-home is
+   present, and shown again in Frappe's icon Edit mode.
    ===================================================================== */
-.iisc-dash {
-	max-width: 1240px;
-	margin: 28px auto 0;
-	padding: 0 24px;
+.desktop-wrapper:has(> .iisc-home) > .desktop-container {
+	display: none;
+}
+
+.desktop-wrapper[data-mode="Edit"] > .iisc-home {
+	display: none;
+}
+
+.desktop-wrapper[data-mode="Edit"]:has(> .iisc-home) > .desktop-container {
+	display: flex;
+}
+
+.iisc-home {
+	display: grid;
+	grid-template-columns: 248px minmax(0, 1fr);
+	gap: 24px;
+	padding: 20px 24px 28px 16px;
+	background: var(--subtle-fg, #f8f8f8);
+	min-height: calc(100dvh - 49px - var(--iisc-footer-h, 0px));
+	align-items: start;
+}
+
+/* --- sidebar --- */
+.iisc-side {
+	position: sticky;
+	top: 12px;
+	display: flex;
+	flex-direction: column;
+	max-height: calc(100dvh - 49px - var(--iisc-footer-h, 0px) - 40px);
+	padding: 14px 12px;
+	border-radius: 16px;
+	background-image: var(--iisc-gradient);
+	color: #ffffff;
+	box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+.iisc-side-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	margin-bottom: 14px;
+	border-radius: 12px;
+	background: #ffffff;
+	color: var(--iisc-navy);
+}
+
+.iisc-side-brand img {
+	height: 30px;
+	width: auto;
+}
+
+.iisc-side-brand-text {
+	font-family: var(--iisc-heading-font);
+	font-size: 17px;
+	color: var(--iisc-heading-color);
+}
+
+.iisc-side-section,
+.iisc-side-group-head {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.iisc-side-section {
+	padding: 4px 10px 6px;
+}
+
+.iisc-side-scroll {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	margin: 6px -4px 10px;
+	padding: 0 4px;
+	scrollbar-width: none;
+}
+
+.iisc-side-scroll::-webkit-scrollbar {
+	display: none;
+}
+
+.iisc-side-group {
+	margin-top: 10px;
+}
+
+.iisc-side-group-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 6px 10px;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.iisc-side-chevron {
+	display: inline-flex;
+	transition: transform 0.15s;
+}
+
+.iisc-side-group.open .iisc-side-chevron {
+	transform: rotate(90deg);
+}
+
+.iisc-side-items {
+	display: none;
+}
+
+.iisc-side-group.open .iisc-side-items {
+	display: block;
+}
+
+.iisc-side-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 8px 10px;
+	margin: 2px 0;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	color: var(--iisc-on-dark);
+	font-size: 14px;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+	--icon-stroke: currentColor;
+	transition: background-color 0.15s, color 0.15s;
+}
+
+.iisc-side-item:hover {
+	background: var(--iisc-on-dark-hover);
+	color: #ffffff;
+}
+
+.iisc-side-item.active {
+	background: #ffffff;
+	color: var(--iisc-navy);
+}
+
+.iisc-side-icon {
+	display: inline-flex;
+	width: 18px;
+	justify-content: center;
+}
+
+.iisc-side-icon .icon {
+	color: currentColor;
+	--icon-stroke: currentColor;
+}
+
+.iisc-side-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.iisc-side-user {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+	border-radius: 12px;
+	background: #ffffff;
+	color: var(--iisc-navy);
+}
+
+.iisc-side-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: rgba(16, 136, 150, 0.12);
+	color: var(--iisc-teal);
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.iisc-side-user-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	flex: 1;
+}
+
+.iisc-side-user-name {
+	font-size: 13px;
+	font-weight: 700;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.iisc-side-user-role {
+	font-size: 12px;
+	color: var(--ink-gray-5, #737373);
+}
+
+.iisc-side-logout {
+	display: inline-flex;
+	border: 0;
+	background: transparent;
+	color: var(--iisc-navy);
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 8px;
+}
+
+.iisc-side-logout:hover {
+	background: rgba(27, 55, 76, 0.08);
+}
+
+/* --- main --- */
+.iisc-main {
+	min-width: 0;
 }
 
 .iisc-dash-head {
@@ -460,7 +681,7 @@ body {
 	justify-content: space-between;
 	gap: 16px;
 	flex-wrap: wrap;
-	margin-bottom: 20px;
+	margin: 8px 0 20px;
 }
 
 .iisc-dash-title {
@@ -499,6 +720,7 @@ body {
 	background: var(--iisc-teal);
 	border: 1px solid var(--iisc-teal);
 	color: #ffffff;
+	box-shadow: 0 4px 10px rgba(16, 136, 150, 0.25);
 }
 
 .iisc-btn-primary:hover {
@@ -519,7 +741,7 @@ body {
 
 .iisc-dash-cards {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 	gap: 16px;
 }
 
@@ -528,12 +750,16 @@ body {
 	padding: 24px 0;
 }
 
-.iisc-dash-card {
+.iisc-dash-card,
+.iisc-panel {
 	background: var(--surface-base, #ffffff);
 	border: 1px solid var(--outline-gray-1, #ededed);
 	border-radius: 14px;
-	padding: 18px;
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.iisc-dash-card {
+	padding: 18px;
 	cursor: pointer;
 	transition: box-shadow 0.15s, border-color 0.15s;
 }
@@ -610,7 +836,6 @@ body {
 	color: var(--ink-gray-5, #737373);
 }
 
-/* Tones: icon badge = tinted bg + colour; sub values = colour only */
 .iisc-dash-icon.tone-teal { background: rgba(16, 136, 150, 0.12); color: var(--iisc-teal); }
 .iisc-dash-icon.tone-blue { background: rgba(0, 102, 153, 0.12); color: var(--iisc-blue); }
 .iisc-dash-icon.tone-green { background: rgba(22, 163, 74, 0.12); color: #16a34a; }
@@ -624,9 +849,113 @@ body {
 
 [data-theme="dark"] .iisc-dash-value { color: #ffffff; }
 
-/* Hide while the Apps screen is in Frappe's icon Edit mode */
-.desktop-wrapper[data-mode="Edit"] > .iisc-dash {
-	display: none;
+/* --- panels: overview + chart --- */
+.iisc-panels {
+	display: grid;
+	grid-template-columns: minmax(260px, 2fr) minmax(0, 3fr);
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.iisc-panel {
+	padding: 20px;
+	min-width: 0;
+}
+
+.iisc-panel-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.iisc-panel-title {
+	margin: 0;
+	font-family: var(--iisc-heading-font);
+	font-size: 20px;
+	font-weight: 400;
+	color: var(--iisc-heading-color);
+}
+
+.iisc-panel-sub {
+	margin: 2px 0 14px;
+	font-size: 13px;
+	color: var(--ink-gray-5, #737373);
+}
+
+.iisc-select {
+	padding: 6px 10px;
+	border: 1px solid var(--outline-gray-2, #d4d4d4);
+	border-radius: 8px;
+	background: var(--surface-base, #ffffff);
+	color: var(--ink-gray-8, #171717);
+	font-size: 13px;
+}
+
+.iisc-ov-row {
+	padding: 10px 0;
+	cursor: pointer;
+}
+
+.iisc-ov-row + .iisc-ov-row {
+	border-top: 1px solid var(--outline-gray-1, #ededed);
+}
+
+.iisc-ov-top,
+.iisc-ov-foot {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.iisc-ov-label {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ink-gray-8, #171717);
+}
+
+.iisc-ov-total {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ink-gray-7, #404040);
+}
+
+.iisc-ov-bar {
+	height: 8px;
+	margin: 8px 0 6px;
+	border-radius: 999px;
+	background: var(--surface-gray-2, #f3f3f3);
+	overflow: hidden;
+}
+
+.iisc-ov-bar span {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--iisc-teal), var(--iisc-navy));
+}
+
+.iisc-ov-foot {
+	font-size: 12px;
+	color: var(--ink-gray-5, #737373);
+}
+
+/* Narrow screens: sidebar on top, panels stacked */
+@media (max-width: 1100px) {
+	.iisc-panels {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 900px) {
+	.iisc-home {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.iisc-side {
+		position: static;
+		max-height: none;
+	}
 }
 
 /* Frappe's form "scroll to top" button is pinned at bottom: 20px (z 1030)
