@@ -199,16 +199,6 @@ body.iisc-footer-on .main-section {
 	opacity: 0.6;
 }
 
-/* Ctrl+K command palette: hide the scrollbar (list still scrolls with wheel/keys).
-   .navbar-modal-wrap only exists in the palette, not other autocompletes. */
-.navbar-modal-wrap .awesomplete > [role="listbox"] {
-	scrollbar-width: none;
-}
-
-.navbar-modal-wrap .awesomplete > [role="listbox"]::-webkit-scrollbar {
-	display: none;
-}
-
 /* =====================================================================
    6. DROPDOWN MENUS — IISc website style
    Measured on iisc.ac.in: menu items bg #108896 (teal), text #ffffff.
@@ -316,6 +306,327 @@ body.iisc-footer-on .main-section {
 .dropdown-menu .dropdown-divider,
 .dropdown-menu .divider {
 	border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+/* --- 6c. Ctrl+K command palette (whole box in IISc teal).
+       Wrapper class verified on v16.60: .navbar-modal-wrapper. --- */
+.modal-content:has(.navbar-modal-wrapper) {
+	background-color: var(--iisc-teal);
+}
+
+.navbar-modal-wrapper .awesomplete input,
+.navbar-modal-wrapper input {
+	background-color: transparent;
+	color: #ffffff;
+}
+
+.navbar-modal-wrapper input::placeholder {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-modal-wrapper .awesomebar-search-icon {
+	color: rgba(255, 255, 255, 0.85);
+	--icon-stroke: rgba(255, 255, 255, 0.85);
+}
+
+.modal-content:has(.navbar-modal-wrapper) .modal-divider {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-content:has(.navbar-modal-wrapper) .cool-awesomebar-modal-footer {
+	background-color: var(--iisc-teal);
+	border-top-color: rgba(255, 255, 255, 0.2);
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.modal-content:has(.navbar-modal-wrapper) .cool-awesomebar-modal-footer * {
+	color: rgba(255, 255, 255, 0.85);
+	border-color: rgba(255, 255, 255, 0.25);
+	--icon-stroke: rgba(255, 255, 255, 0.85);
+}
+
+/* Key caps (↑ ↓ ↵ Ctrl+K Ctrl+G): Frappe .help-item has a #ededed background */
+.modal-content:has(.navbar-modal-wrapper) .cool-awesomebar-modal-footer .help-item {
+	background-color: rgba(255, 255, 255, 0.18);
+	color: #ffffff;
+	--icon-stroke: #ffffff;
+}
+
+/* Palette result list: no scrollbar (still scrolls with wheel / arrow keys) */
+.navbar-modal-wrapper .awesomplete > [role="listbox"] {
+	scrollbar-width: none;
+}
+
+.navbar-modal-wrapper .awesomplete > [role="listbox"]::-webkit-scrollbar {
+	display: none;
+}
+
+/* --- 6d. All autocomplete lists (.awesomplete): link-field suggestions,
+       filter fields and the palette results.
+       Frappe: listbox bg --bg-color, items --text-color,
+       hover/selected --awesomplete-hover-bg. --- */
+.awesomplete > [role="listbox"] {
+	background-color: var(--iisc-teal);
+	border-color: var(--iisc-teal);
+}
+
+.navbar-modal-wrapper .awesomplete > [role="listbox"] {
+	background-color: transparent;
+}
+
+.awesomplete > [role="listbox"] > li,
+.awesomplete > [role="listbox"] > [role="option"] {
+	color: #ffffff;
+}
+
+.awesomplete > [role="listbox"] > li *,
+.awesomplete > [role="listbox"] > [role="option"] *,
+.awesomplete > [role="listbox"] > li .link-option,
+.awesomplete > [role="listbox"] > [role="option"] .link-option {
+	color: inherit;
+}
+
+.awesomplete > [role="listbox"] > li .text-muted,
+.awesomplete > [role="listbox"] > li small,
+.awesomplete > [role="listbox"] > li .small,
+.awesomplete > [role="listbox"] > [role="option"] .text-muted,
+.awesomplete > [role="listbox"] > [role="option"] small {
+	color: rgba(255, 255, 255, 0.75);
+}
+
+.awesomplete > [role="listbox"] > li:hover,
+.awesomplete > [role="listbox"] > li[aria-selected="true"],
+.awesomplete > [role="listbox"] > [role="option"]:hover,
+.awesomplete > [role="listbox"] > [role="option"][aria-selected="true"] {
+	background-color: var(--iisc-navy);
+	color: #ffffff;
+}
+
+.awesomplete > [role="listbox"] mark {
+	background-color: rgba(255, 255, 255, 0.25);
+	color: #ffffff;
+}
+
+/* =====================================================================
+   7. TYPOGRAPHY — IISc website (measured on iisc.ac.in)
+   Body: Source Sans Pro, 15px. Headings: Playfair Display, #EE5030, 400.
+   Fonts are loaded by bundle.js (Google Fonts).
+   ===================================================================== */
+:root {
+	--font-stack: "Source Sans 3", "Source Sans Pro", "InterVariable", "Inter", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, sans-serif;
+	--text-base: 15px;
+	--text-md: 15px;
+	--iisc-heading-font: "Playfair Display", Georgia, "Times New Roman", serif;
+	--iisc-heading-color: #ee5030;
+}
+
+body {
+	font-size: var(--text-base);
+}
+
+/* Page title = current breadcrumb in the page header (v16) */
+.page-head .es-breadcrumbs__item[aria-current="page"] .es-breadcrumbs__label {
+	font-family: var(--iisc-heading-font);
+	font-size: 22px;
+	font-weight: 400;
+	color: var(--iisc-heading-color);
+}
+
+/* Form section headings, chart / onboarding card titles, dialog titles */
+.form-section .section-head,
+.dashboard-widget-box .widget-title,
+.onboarding-widget-box .widget-title,
+.modal-header .modal-title {
+	font-family: var(--iisc-heading-font);
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--iisc-heading-color);
+}
+
+/* =====================================================================
+   8. HR DASHBOARD on the Apps screen (rendered by bundle.js)
+   Style modelled on the iEmpPower dashboard, in IISc colours.
+   ===================================================================== */
+.iisc-dash {
+	max-width: 1240px;
+	margin: 28px auto 0;
+	padding: 0 24px;
+}
+
+.iisc-dash-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.iisc-dash-title {
+	margin: 0;
+	font-family: var(--iisc-heading-font);
+	font-size: 28px;
+	font-weight: 400;
+	color: var(--iisc-heading-color);
+}
+
+.iisc-dash-subtitle {
+	margin: 4px 0 0;
+	color: var(--ink-gray-5, #737373);
+	font-size: 15px;
+}
+
+.iisc-dash-actions {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.iisc-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 9px 16px;
+	border-radius: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.iisc-btn-primary {
+	background: var(--iisc-teal);
+	border: 1px solid var(--iisc-teal);
+	color: #ffffff;
+}
+
+.iisc-btn-primary:hover {
+	background: var(--iisc-navy);
+	border-color: var(--iisc-navy);
+}
+
+.iisc-btn-outline {
+	background: var(--surface-base, #ffffff);
+	border: 1px solid var(--outline-gray-2, #d4d4d4);
+	color: var(--iisc-teal);
+}
+
+.iisc-btn-outline:hover {
+	border-color: var(--iisc-teal);
+	background: rgba(16, 136, 150, 0.06);
+}
+
+.iisc-dash-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+	gap: 16px;
+}
+
+.iisc-dash-loading {
+	color: var(--ink-gray-5, #737373);
+	padding: 24px 0;
+}
+
+.iisc-dash-card {
+	background: var(--surface-base, #ffffff);
+	border: 1px solid var(--outline-gray-1, #ededed);
+	border-radius: 14px;
+	padding: 18px;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+	cursor: pointer;
+	transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.iisc-dash-card:hover,
+.iisc-dash-card:focus-visible {
+	border-color: rgba(16, 136, 150, 0.45);
+	box-shadow: 0 6px 16px rgba(16, 24, 40, 0.08);
+	outline: none;
+}
+
+.iisc-dash-card-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 14px;
+}
+
+.iisc-dash-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 10px;
+}
+
+.iisc-dash-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ink-gray-7, #404040);
+}
+
+.iisc-dash-value {
+	font-size: 34px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--ink-gray-9, #0a0a0a);
+}
+
+.iisc-dash-caption {
+	margin-top: 2px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--ink-gray-5, #737373);
+}
+
+.iisc-dash-subs {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid var(--outline-gray-1, #ededed);
+}
+
+.iisc-dash-sub {
+	text-align: center;
+	flex: 1;
+}
+
+.iisc-dash-sub-value {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.iisc-dash-sub-label {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--ink-gray-5, #737373);
+}
+
+/* Tones: icon badge = tinted bg + colour; sub values = colour only */
+.iisc-dash-icon.tone-teal { background: rgba(16, 136, 150, 0.12); color: var(--iisc-teal); }
+.iisc-dash-icon.tone-blue { background: rgba(0, 102, 153, 0.12); color: var(--iisc-blue); }
+.iisc-dash-icon.tone-green { background: rgba(22, 163, 74, 0.12); color: #16a34a; }
+.iisc-dash-icon.tone-navy { background: rgba(27, 55, 76, 0.12); color: var(--iisc-navy); }
+.iisc-dash-icon.tone-orange { background: rgba(238, 80, 48, 0.12); color: var(--iisc-orange); }
+
+.iisc-dash-sub-value.tone-teal { color: var(--iisc-teal); }
+.iisc-dash-sub-value.tone-blue { color: var(--iisc-blue); }
+.iisc-dash-sub-value.tone-red { color: #d92d20; }
+.iisc-dash-sub-value.tone-navy { color: var(--iisc-navy); }
+
+[data-theme="dark"] .iisc-dash-value { color: #ffffff; }
+
+/* Hide while the Apps screen is in Frappe's icon Edit mode */
+.desktop-wrapper[data-mode="Edit"] > .iisc-dash {
+	display: none;
 }
 
 /* Frappe's form "scroll to top" button is pinned at bottom: 20px (z 1030)
