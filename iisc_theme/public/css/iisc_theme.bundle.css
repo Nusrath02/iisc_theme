@@ -13,7 +13,10 @@
 	--iisc-teal: #108896;
 	--iisc-blue: #006699;
 	--iisc-orange: #ee5030;
-	--iisc-gradient: linear-gradient(180deg, #1b374c 0%, #164a5c 55%, #108896 100%);
+	--iisc-navy-deep: #13293a; /* dock rail: one step darker than the IISc navy */
+	--iisc-teal-tint: #e7f3f5;
+	--iisc-teal-tint-2: #d2e9ed;
+	--iisc-teal-tint-3: #bcdee3;
 	--iisc-on-dark: rgba(255, 255, 255, 0.86);
 	--iisc-on-dark-hover: rgba(255, 255, 255, 0.12);
 	--iisc-on-dark-line: rgba(255, 255, 255, 0.16);
@@ -73,23 +76,23 @@
      .dock .dock-logo / .dock-utilities    → --outline-gray-1 (dividers)
    ===================================================================== */
 #desk-dock {
-	--dock-bg: var(--iisc-navy);
+	--dock-bg: var(--iisc-navy-deep);
 	--dock-ink: var(--iisc-on-dark);
 	--dock-ink-hover: #ffffff;
-	--dock-ink-active: var(--iisc-navy);
+	--dock-ink-active: #ffffff;
 	--surface-gray-2: var(--iisc-on-dark-hover);
 	--surface-gray-3: var(--iisc-on-dark-hover);
-	--surface-elevation-3: #ffffff;
+	--surface-elevation-3: var(--iisc-teal);
 	--outline-gray-1: var(--iisc-on-dark-line);
 	--outline-gray-4: rgba(255, 255, 255, 0.6);
 	--ink-gray-8: #ffffff;
-	background-image: var(--iisc-gradient);
+	background: var(--iisc-navy-deep);
 }
 
 /* Utility button (search / notifications / flow) while its panel is open:
-   white tile → navy icon */
+   teal tile → white icon */
 #desk-dock .dock-utilities .dock-item[aria-expanded="true"] {
-	color: var(--iisc-navy);
+	color: #ffffff;
 }
 
 /* =====================================================================
@@ -111,10 +114,10 @@
 	--surface-gray-2: var(--iisc-on-dark-hover);
 	--surface-gray-3: var(--iisc-on-dark-hover);
 	--surface-elevation-2: rgba(255, 255, 255, 0.18);
-	--surface-elevation-3: #ffffff;
+	--surface-elevation-3: var(--iisc-teal);
 	--outline-gray-1: var(--iisc-on-dark-line);
 	--outline-gray-2: var(--iisc-on-dark-line);
-	background-image: var(--iisc-gradient);
+	background: var(--iisc-navy);
 }
 
 /* Header: module name + chevron (normal, hover, open) */
@@ -138,10 +141,11 @@
 	color: rgba(255, 255, 255, 0.55) !important;
 }
 
-/* Active item — white pill, navy text (expanded + collapsed variants) */
+/* Active item — IISc teal pill, white text (expanded + collapsed variants) */
 .body-sidebar .standard-sidebar-item.active-sidebar .item-anchor,
 .body-sidebar-container:not(.expanded) .sidebar-item-container:has(> .nested-container.hidden .active-sidebar) > .standard-sidebar-item .item-anchor {
-	color: var(--iisc-navy);
+	color: #ffffff;
+	font-weight: 600;
 }
 
 /* Bottom user button (expanded sidebar variant) */
@@ -436,7 +440,9 @@ body {
 /* Form section headings, chart / onboarding card titles, dialog titles */
 .form-section .section-head,
 .dashboard-widget-box .widget-title,
+.dashboard-widget-box .widget-title .ellipsis,
 .onboarding-widget-box .widget-title,
+.onboarding-widget-box .widget-title .ellipsis,
 .modal-header .modal-title {
 	font-family: var(--iisc-heading-font);
 	font-size: 18px;
@@ -486,7 +492,7 @@ body {
 	flex-direction: column;
 	height: calc(100dvh - var(--iisc-footer-h, 0px));
 	padding: 18px 14px 14px;
-	background: linear-gradient(180deg, #1b374c 0%, #173f52 55%, #13505d 100%);
+	background: var(--iisc-navy);
 	color: #ffffff;
 }
 
@@ -780,6 +786,10 @@ body {
 
 .iisc-search span {
 	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .iisc-search kbd {
@@ -1384,7 +1394,8 @@ body {
 .iisc-notice-card {
 	padding: 20px;
 	border-radius: 16px;
-	background: linear-gradient(135deg, #1b374c 0%, #13505d 100%);
+	background: var(--iisc-navy);
+	border-left: 4px solid var(--iisc-orange);
 	color: #ffffff;
 	box-shadow: 0 8px 20px rgba(27, 55, 76, 0.25);
 }
@@ -1436,6 +1447,135 @@ body {
 	font-family: var(--font-stack);
 }
 
+/* segmented toggle (Workforce Mix: Type / Gender) */
+.iisc-seg {
+	display: inline-flex;
+	padding: 3px;
+	border-radius: 9px;
+	background: var(--iisc-teal-tint);
+}
+
+.iisc-seg button {
+	height: 28px;
+	padding: 0 12px;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--iisc-navy);
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.iisc-seg button.active {
+	background: #ffffff;
+	color: var(--iisc-teal);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+}
+
+/* chart empty state */
+.iisc-chart-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 220px;
+	text-align: center;
+}
+
+.iisc-chart-empty svg {
+	color: #b8c7d1;
+}
+
+.iisc-chart .frappe-chart .title {
+	display: none;
+}
+
+/* headcount by department (horizontal bars) */
+.iisc-hbars {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding-top: 6px;
+}
+
+.iisc-hbar {
+	display: grid;
+	grid-template-columns: minmax(110px, 30%) minmax(0, 1fr) 72px;
+	align-items: center;
+	gap: 12px;
+	font-size: 13px;
+}
+
+.iisc-hbar-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--iisc-text);
+	font-weight: 600;
+}
+
+.iisc-hbar-track {
+	height: 12px;
+	border-radius: 999px;
+	background: #eef0f3;
+	overflow: hidden;
+}
+
+.iisc-hbar-track span {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: var(--iisc-navy);
+}
+
+.iisc-hbar:nth-child(2n) .iisc-hbar-track span {
+	background: var(--iisc-teal);
+}
+
+.iisc-hbar-value {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.iisc-hbar-value small {
+	color: var(--iisc-muted);
+}
+
+/* celebrations */
+.iisc-celebrate {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 10px;
+	padding: 10px 12px;
+	border: 1px solid #eef0f3;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: border-color 0.15s;
+}
+
+.iisc-celebrate:hover {
+	border-color: rgba(16, 136, 150, 0.45);
+}
+
+.iisc-celebrate-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+}
+
+/* period select in the top bar */
+.iisc-topbar .iisc-select {
+	height: 38px;
+	border-radius: 10px;
+}
+
 /* responsive */
 @media (max-width: 1350px) {
 	.iisc-kpis {
@@ -1463,6 +1603,100 @@ body {
 	.iisc-kpis {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
+}
+
+/* Number-card labels on workspaces: IISc navy (body font) */
+.number-widget-box .widget-title .ellipsis {
+	color: var(--iisc-navy);
+}
+
+/* =====================================================================
+   9. ONE BUTTON + ACCENT LANGUAGE ACROSS THE WHOLE DESK
+   Frappe's default "subtle" buttons (List View, Import, Filter, ⋯, refresh,
+   Today, chart menus, dialog Cancel …) are neutral grey; IISc uses a light
+   teal tint with navy text. Colours only — sizes/spacing untouched.
+   ===================================================================== */
+/* Espresso: default/subtle, outline and ghost variants read these */
+.es-button:not([data-theme]) {
+	--bt-fill-bg: var(--iisc-teal-tint);
+	--bt-fill-bg-hover: var(--iisc-teal-tint-2);
+	--bt-fill-bg-active: var(--iisc-teal-tint-3);
+	--bt-fg: var(--iisc-navy);
+	--bt-border: #c9dfe3;
+	--bt-border-hover: var(--iisc-teal);
+	--bt-outline-bg-active: var(--iisc-teal-tint);
+}
+
+/* …but not inside the navy dock / sidebar / palette, which keep their own */
+#desk-dock .es-button:not([data-theme]),
+.body-sidebar .es-button:not([data-theme]) {
+	--bt-fill-bg: transparent;
+	--bt-fill-bg-hover: var(--iisc-on-dark-hover);
+	--bt-fill-bg-active: var(--iisc-on-dark-hover);
+	--bt-fg: #ffffff;
+}
+
+/* Bootstrap buttons still used by lists, reports, charts, dialogs */
+.btn.btn-default,
+.btn.btn-secondary,
+.btn.btn-light {
+	background-color: var(--iisc-teal-tint);
+	border-color: var(--iisc-teal-tint);
+	color: var(--iisc-navy);
+	--icon-stroke: currentColor;
+}
+
+.btn.btn-default:hover,
+.btn.btn-secondary:hover,
+.btn.btn-light:hover,
+.btn.btn-default:focus,
+.btn.btn-secondary:focus {
+	background-color: var(--iisc-teal-tint-2);
+	border-color: var(--iisc-teal-tint-2);
+	color: var(--iisc-navy);
+}
+
+.btn.btn-default:active,
+.btn.btn-secondary:active,
+.btn.btn-light:active,
+.show > .btn.btn-default.dropdown-toggle {
+	background-color: var(--iisc-teal-tint-3) !important;
+	color: var(--iisc-navy) !important;
+}
+
+/* Muted icon buttons (list settings, sidebar toggles), chart filter
+   buttons on workspace/dashboard cards, and disabled Espresso buttons */
+.btn.btn-default.text-muted {
+	color: var(--iisc-navy) !important;
+}
+
+.widget .btn.filter-chart,
+.dashboard-widget-box .btn.btn-xs {
+	background-color: var(--iisc-teal-tint);
+	color: var(--iisc-navy);
+	--icon-stroke: currentColor;
+}
+
+.es-button:not([data-theme]) {
+	--bt-disabled-bg: var(--iisc-teal-tint);
+	--bt-disabled-fg: #8aa3b1;
+	--bt-disabled-border: var(--iisc-teal-tint);
+}
+
+/* Form tabs (Details / Personal / Employment …): active tab in IISc teal */
+.form-tabs-list .form-tabs .nav-item .nav-link.active {
+	color: var(--iisc-teal);
+	border-bottom-color: var(--iisc-teal);
+	font-weight: 600;
+}
+
+.form-tabs-list .form-tabs .nav-item .nav-link:hover {
+	color: var(--iisc-navy);
+}
+
+/* Breadcrumb parents next to the red page title */
+.page-head .es-breadcrumbs__item:not([aria-current="page"]) .es-breadcrumbs__label {
+	color: var(--iisc-navy);
 }
 
 /* Frappe's form "scroll to top" button is pinned at bottom: 20px (z 1030)
