@@ -1,45 +1,63 @@
 // =====================================================================
 // IISc Theme — Frappe v16 (16.60) Desk
-//
-// Footer is rendered into v16's native <footer> inside .main-section
-// (full content width, one instance, outside individual pages).
-//
-// Hidden on:
-//   - Apps screen  (route [""])
-//   - Workspaces   (route ["Workspaces", ...]) — Frappe core fixes
-//     [data-page-route="Workspaces"] .layout-main to 100vh and lets the
-//     cards overflow, so a footer there would sit behind the cards.
-// Verified on iiscdemo.frappe.cloud: list, form, report, dashboard OK.
+// Footer pinned to the bottom of the screen on every Desk page (desktop).
+//  - Appended to <body>, position: fixed (see bundle.css §5)
+//  - left/width follow .main-section (sidebar collapse/expand, resize)
+//  - sets --iisc-footer-h so .main-section reserves space for it
+//  - hidden below 768px by CSS (v16 shows its own mobile bottom nav)
 // =====================================================================
 
-const IISC_HIDE_FOOTER_ON = ["", "desktop", "workspaces"];
+const iiscFooter = {
+	el: null,
 
-function iiscFooterAllowed() {
-	const route = (window.frappe && frappe.get_route && frappe.get_route()) || [""];
-	const first = String(route[0] || "").toLowerCase();
-	return !IISC_HIDE_FOOTER_ON.includes(first);
-}
-
-function iiscRenderFooter() {
-	const host = document.querySelector(".main-section > footer");
-	if (!host) return;
-
-	let footer = host.querySelector(".iisc-footer");
-	if (!footer) {
-		footer = document.createElement("div");
-		footer.className = "iisc-footer";
-		footer.innerHTML = `
+	render() {
+		if (this.el && document.body.contains(this.el)) return;
+		this.el = document.createElement("div");
+		this.el.className = "iisc-footer";
+		this.el.innerHTML = `
 			<span>© ${new Date().getFullYear()} Indian Institute of Science, Bengaluru | Design: ITChamps</span>
 			<img src="/assets/iisc_theme/images/iisc-logo.svg" alt="IISc" onerror="this.style.display='none'">
 		`;
-		host.appendChild(footer);
-	}
+		document.body.appendChild(this.el);
+		document.body.classList.add("iisc-footer-on");
+	},
 
-	footer.style.display = iiscFooterAllowed() ? "" : "none";
-}
+	place() {
+		const main = document.querySelector(".main-section");
+		if (!this.el || !main) return;
 
-$(document).ready(() => setTimeout(iiscRenderFooter, 200));
+		const rect = main.getBoundingClientRect();
+		this.el.style.left = `${rect.left}px`;
+		this.el.style.width = `${main.clientWidth}px`; // excludes the scrollbar
+		const h = `${this.el.offsetHeight}px`;
+		if (document.body.style.getPropertyValue("--iisc-footer-h") !== h) {
+			document.body.style.setProperty("--iisc-footer-h", h);
+			// Frappe's list view sizes its scroll area on window resize
+			// (ListView.setup_resize_handler → set_result_height) — re-run it
+			// now that .main-section is shorter.
+			window.dispatchEvent(new Event("resize"));
+		}
+	},
 
-if (window.frappe && frappe.router) {
-	frappe.router.on("change", () => setTimeout(iiscRenderFooter, 200));
-}
+	init() {
+		this.render();
+		this.place();
+
+		const main = document.querySelector(".main-section");
+		if (main && window.ResizeObserver) {
+			new ResizeObserver(() => this.place()).observe(main);
+		}
+		window.addEventListener("resize", () => this.place());
+
+		if (window.frappe && frappe.router) {
+			frappe.router.on("change", () =>
+				setTimeout(() => {
+					this.render();
+					this.place();
+				}, 200)
+			);
+		}
+	},
+};
+
+$(document).ready(() => setTimeout(() => iiscFooter.init(), 200));
