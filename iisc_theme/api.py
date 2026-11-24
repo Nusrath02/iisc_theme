@@ -1,7 +1,11 @@
+from collections import Counter, defaultdict
+
 import frappe
 from frappe import _
 from frappe.utils import (
+	add_days,
 	add_months,
+	flt,
 	date_diff,
 	fmt_money,
 	get_first_day,
@@ -147,7 +151,7 @@ def _series(now, months):
 			values.append(c)
 		if values is not None:
 			datasets.append({"name": label, "values": values})
-	return {"labels": [d.strftime("%b %Y") for d in starts], "datasets": datasets}
+	return {"labels": _month_labels(starts), "datasets": datasets}
 
 
 # ---------------------------------------------------------------------------
@@ -246,6 +250,184 @@ def _notice():
 
 
 # ---------------------------------------------------------------------------
+# Insight charts (all respect the user's read permissions)
+# ---------------------------------------------------------------------------
+def _rows(doctype, filters, fields):
+	if not _can_read(doctype):
+		return None
+	return frappe.get_list(doctype, filters=filters, fields=fields, limit_page_length=0)
+
+
+def _short(name):
+	"""'Physics - IISC' -> 'Physics' (drop the company abbreviation)."""
+	return name.rsplit(" - ", 1)[0] if name and " - " in name else name
+
+
+def _top(counter, n=7):
+	items = sorted(counter.items(), key=lambda kv: (-kv[1], kv[0]))
+	top, rest = items[:n], sum(v for _k, v in items[n:])
+	if rest:
+		top.append((_("Others"), rest))
+	return {"labels": [k for k, _v in top], "values": [round(v, 1) for _k, v in top]}
+
+
+def _month_labels(starts):
+	"""'Jun 26', 'Jul', 'Aug' … — year only on the first bar and on January."""
+	return [d.strftime("%b %y") if (i == 0 or d.month == 1) else d.strftime("%b") for i, d in enumerate(starts)]
+
+
+def _month_starts(now, months):
+	return [get_first_day(add_months(now, -i)) for i in range(months - 1, -1, -1)]
+
+
+def _bucket(starts, value):
+	"""Index of the month (from starts) that a date falls into, or None."""
+	if not value:
+		return None
+	d = getdate(value)
+	for i, start in enumerate(starts):
+		if start <= d <= get_last_day(start):
+			return i
+	return None
+
+
+def _insights(now, months):
+	starts = _month_starts(now, months)
+	window = ["between", [starts[0], get_last_day(starts[-1])]]
+	labels = _month_labels(starts)
+	out = {}
+
+	# Headcount by department + workforce mix (active staff)
+	emps = _rows("Employee", {"status": "Active"}, ["department", "employment_type", "gender"])
+	if emps is not None:
+		out["departments"] = _top(Counter(_short(e.department) or _("Unassigned") for e in emps), 8)
+		out["workforce"] = _top(Counter(e.employment_type or _("Not Set") for e in emps), 5)
+		out["gender"] = _top(Counter(e.gender or _("Not Set") for e in emps), 4)
+
+	# Joiners vs leavers per month
+	joined = _rows("Employee", {"date_of_joining": window}, ["date_of_joining"])
+	left = _rows("Employee", {"relieving_date": window}, ["relieving_date"])
+	if joined is not None and left is not None:
+		j, l = [0] * months, [0] * months
+		for r in joined:
+			i = _bucket(starts, r.date_of_joining)
+			if i is not None:
+				j[i] += 1
+		for r in left:
+			i = _bucket(starts, r.relieving_date)
+			if i is not None:
+				l[i] += 1
+		out["movement"] = {
+			"labels": labels,
+			"datasets": [{"name": _("Joined"), "values": j}, {"name": _("Relieved"), "values": l}],
+		}
+
+	# Approved leave days by type (this year)
+	leaves = _rows(
+		"Leave Application",
+		{"status": "Approved", "docstatus": 1, "from_date": ["between", [getdate(f"{now.year}-01-01"), now.replace(month=12, day=31)]]},
+		["leave_type", "total_leave_days"],
+	)
+	if leaves is not None:
+		days = defaultdict(float)
+		for r in leaves:
+			days[r.leave_type or _("Other")] += flt(r.total_leave_days)
+		out["leave_types"] = _top(days, 6)
+
+	# Attendance, last 14 days
+	since = add_days(now, -13)
+	att = _rows("Attendance", {"docstatus": 1, "attendance_date": ["between", [since, now]]}, ["attendance_date", "status"])
+	if att is not None:
+		dates = [add_days(since, i) for i in range(14)]
+		idx = {str(d): i for i, d in enumerate(dates)}
+		present, on_leave, absent = [0] * 14, [0] * 14, [0] * 14
+		for r in att:
+			i = idx.get(str(r.attendance_date))
+			if i is None:
+				continue
+			if r.status in ("Present", "Work From Home", "Half Day"):
+				present[i] += 1
+			elif r.status == "On Leave":
+				on_leave[i] += 1
+			elif r.status == "Absent":
+				absent[i] += 1
+		out["attendance_trend"] = {
+			"labels": [d.strftime("%d %b") for d in dates],
+			"datasets": [
+				{"name": _("Present"), "values": present},
+				{"name": _("On Leave"), "values": on_leave},
+				{"name": _("Absent"), "values": absent},
+			],
+		}
+
+	# Payroll cost per month (submitted salary slips)
+	slips = _rows("Salary Slip", {"docstatus": 1, "start_date": window}, ["start_date", "gross_pay", "net_pay", "currency"])
+	if slips is not None:
+		gross, net = [0.0] * months, [0.0] * months
+		for r in slips:
+			i = _bucket(starts, r.start_date)
+			if i is not None:
+				gross[i] += flt(r.gross_pay)
+				net[i] += flt(r.net_pay)
+		currency = (slips[0].currency if slips else None) or frappe.defaults.get_global_default("currency") or "INR"
+		out["payroll"] = {
+			"labels": labels,
+			"currency": currency,
+			"datasets": [
+				{"name": _("Gross Pay"), "values": [round(v, 2) for v in gross]},
+				{"name": _("Net Pay"), "values": [round(v, 2) for v in net]},
+			],
+			"total_gross": round(sum(gross), 2),
+		}
+
+	return out
+
+
+def _celebrations(now, days=30):
+	"""Birthdays and work anniversaries in the next `days` days."""
+	rows = _rows("Employee", {"status": "Active"}, ["name", "employee_name", "department", "date_of_birth", "date_of_joining"])
+	if rows is None:
+		return None
+	items = []
+
+	def next_occurrence(d):
+		d = getdate(d)
+		for year in (now.year, now.year + 1):
+			try:
+				candidate = d.replace(year=year)
+			except ValueError:  # 29 Feb in a non-leap year
+				candidate = d.replace(year=year, day=28)
+			if candidate >= now:
+				return candidate
+		return None
+
+	for r in rows:
+		for kind, value in (("birthday", r.date_of_birth), ("anniversary", r.date_of_joining)):
+			if not value:
+				continue
+			nxt = next_occurrence(value)
+			if not nxt:
+				continue
+			left = date_diff(nxt, now)
+			years = nxt.year - getdate(value).year
+			if left > days or (kind == "anniversary" and years < 1):
+				continue
+			items.append(
+				{
+					"employee": r.name,
+					"employee_name": r.employee_name or r.name,
+					"department": _short(r.department),
+					"kind": kind,
+					"date": str(nxt),
+					"days_left": left,
+					"years": years if kind == "anniversary" else None,
+				}
+			)
+	items.sort(key=lambda i: (i["days_left"], i["employee_name"]))
+	return items[:6]
+
+
+# ---------------------------------------------------------------------------
 # public API
 # ---------------------------------------------------------------------------
 @frappe.whitelist()
@@ -268,6 +450,8 @@ def get_hr_dashboard(months=6):
 		"series": _series(now, months),
 		"pending": pending,
 		"notice": _notice(),
+		"insights": _insights(now, months),
+		"celebrations": _celebrations(now),
 		"unread_notifications": unread,
 		"today": str(now),
 	}
