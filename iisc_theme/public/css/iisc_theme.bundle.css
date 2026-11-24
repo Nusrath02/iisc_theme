@@ -1,0 +1,121 @@
+/* =====================================================================
+   IISc Theme — Frappe v16 Desk
+   Brand: Navy #1B374C | Teal #108896 | Blue #006699 | Orange #EE5030
+   ===================================================================== */
+
+/* ---------- 1. Brand tokens ---------- */
+:root {
+	--iisc-navy: #1b374c;
+	--iisc-navy-dark: #12293a;
+	--iisc-teal: #108896;
+	--iisc-teal-dark: #0c6d78;
+	--iisc-blue: #006699;
+	--iisc-orange: #ee5030;
+	--iisc-grey: #eeeeee;
+	--iisc-text: #333333;
+	--iisc-gradient: linear-gradient(135deg, #1b374c 0%, #0f5f6e 50%, #108896 100%);
+	--iisc-font: "Source Sans 3", "Source Sans Pro", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-theme="dark"] {
+	--iisc-teal: #22a3b2;
+	--iisc-teal-dark: #1a8995;
+	--iisc-blue: #3a9fd1;
+	--iisc-text: #e5e7eb;
+}
+
+/* ---------- 2. Typography ---------- */
+body,
+.btn,
+.form-control,
+input,
+select,
+textarea {
+	font-family: var(--iisc-font);
+}
+
+/* ---------- 3. Primary buttons ---------- */
+.btn-primary,
+.btn.btn-primary {
+	background: var(--iisc-gradient) !important;
+	border-color: transparent !important;
+	color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn.btn-primary:hover {
+	background: var(--iisc-navy) !important;
+	color: #ffffff !important;
+}
+
+/* ---------- 4. Links ---------- */
+.frappe-control a:not(.btn),
+.form-layout a:not(.btn),
+.indicator-pill a,
+.ql-editor a {
+	color: var(--iisc-blue);
+}
+
+/* ---------- 5. Focus states ---------- */
+.form-control:focus,
+.awesomplete input:focus {
+	box-shadow: 0 0 0 2px rgba(16, 136, 150, 0.35) !important;
+	border-color: var(--iisc-teal) !important;
+}
+
+/* ---------- 6. Checkboxes ---------- */
+input[type="checkbox"]:checked {
+	background-color: var(--iisc-teal) !important;
+	border-color: var(--iisc-teal) !important;
+}
+
+/* ---------- 7. Login page ---------- */
+.page-card-head .app-logo,
+.for-login .page-card-head img {
+	max-height: 60px;
+}
+
+.for-login .btn-login,
+.for-forgot .btn-primary,
+.for-signup .btn-primary {
+	background: var(--iisc-gradient) !important;
+	border: none !important;
+}
+
+/* ---------- 8. IISc footer ---------- */
+.iisc-footer {
+	width: 100%;
+	background: var(--iisc-navy);
+	color: #ffffff;
+	padding: 12px 20px;
+	margin-top: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	flex-wrap: wrap;
+	font-size: 12px;
+	font-family: var(--iisc-font);
+}
+
+.iisc-footer img {
+	height: 28px;
+	width: auto;
+	opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+	.iisc-footer {
+		font-size: 10px;
+		/* keep clear of the v16.60 mobile bottom navigation */
+		margin-bottom: 64px;
+	}
+}
+
+/* =====================================================================
+   9. v16 SIDEBAR / DOCK / NAVBAR
+   TODO: fill in after inspecting iiscdemo.frappe.cloud (v16.60 DOM).
+   Do NOT reuse SYCONE v14 selectors (.desk-sidebar, .standard-sidebar-section,
+   #navbar-search, [data-page-route=Workspaces]) — they don't exist in v16.
+   ===================================================================== */
