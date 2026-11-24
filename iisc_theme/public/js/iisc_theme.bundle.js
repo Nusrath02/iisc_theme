@@ -73,7 +73,13 @@ const iiscFooter = {
 	},
 };
 
-// ---------- 3. HR dashboard on the Apps screen ----------
+// ---------- 3. IISc HR home on the Apps screen (/desk) ----------
+// Replaces the app-icon grid with an iEmpPower-style home: a module sidebar
+// (built from frappe.boot.app_data — the same modules as the v16 dock),
+// greeting + quick actions, live HR cards, approval overview and a chart.
+// Frappe's icon grid (.desktop-container) is hidden by CSS while the home
+// is present; it comes back in Frappe's icon Edit mode.
+
 const IISC_ICONS = {
 	users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
 	calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
@@ -81,13 +87,20 @@ const IISC_ICONS = {
 	wallet: '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/>',
 	sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
 	plus: '<path d="M12 5v14M5 12h14"/>',
+	grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+	chevron: '<path d="M9 18l6-6-6-6"/>',
+	logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
 };
 
-const iiscSvg = (name) =>
-	`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IISC_ICONS[name]}</svg>`;
+const iiscSvg = (name, size = 18) =>
+	`<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IISC_ICONS[name]}</svg>`;
 
-const iiscDashboard = {
+const iiscEsc = (v) => frappe.utils.escape_html(v === null || v === undefined ? "" : String(v));
+
+const iiscHome = {
 	loading: false,
+	months: 6,
+	chart: null,
 
 	isAppsScreen() {
 		const route = (window.frappe && frappe.get_route && frappe.get_route()) || [];
@@ -100,7 +113,108 @@ const iiscDashboard = {
 	},
 
 	num(v) {
-		return v === null || v === undefined ? "—" : frappe.utils.escape_html(String(v));
+		return v === null || v === undefined ? "—" : iiscEsc(v);
+	},
+
+	// --- sidebar: apps + their modules, from frappe.boot.app_data ---
+	apps() {
+		const order = { hrms: 0, erpnext: 1, frappe: 2 };
+		const sidebars = frappe.boot.module_sidebars || {};
+		return (frappe.boot.app_data || [])
+			.filter((a) => a.on_apps_screen && (a.dock || []).length)
+			.sort((a, b) => (order[a.app_name] ?? 9) - (order[b.app_name] ?? 9))
+			.map((a) => ({
+				name: a.app_name,
+				title: a.app_title,
+				modules: a.dock.filter((d) => d.link_type !== "Sidebar" || sidebars[d.link_to]),
+			}))
+			.filter((a) => a.modules.length);
+	},
+
+	openModule(link_type, link_to, url) {
+		if (link_type === "URL" && url) return (window.location.href = url);
+		const sb = (frappe.boot.module_sidebars || {})[link_to];
+		const first = sb && (sb.items || []).find((i) => i.type === "Link");
+		if (first && first.link_type === "Workspace") return frappe.set_route("Workspaces", first.link_to);
+		if (first && first.link_type === "DocType") return frappe.set_route("List", first.link_to);
+		if (first && first.link_type === "Report") return frappe.set_route("query-report", first.link_to);
+		if (first && first.link_type === "Page") return frappe.set_route(first.link_to);
+		frappe.set_route(frappe.router.slug(link_to));
+	},
+
+	sidebar() {
+		const groups = this.apps()
+			.map((a, idx) => {
+				const items = a.modules
+					.map(
+						(m) => `
+						<button class="iisc-side-item" data-module="${iiscEsc(m.link_to)}" data-type="${iiscEsc(m.link_type)}" data-url="${iiscEsc(m.url || "")}">
+							<span class="iisc-side-icon">${frappe.utils.icon(m.icon || "folder-normal", "md")}</span>
+							<span class="iisc-side-label">${iiscEsc(__(m.title))}</span>
+						</button>`
+					)
+					.join("");
+				const open = idx === 0; // Frappe HR expanded, others collapsed
+				return `
+					<div class="iisc-side-group ${open ? "open" : ""}">
+						<button class="iisc-side-group-head" data-toggle-group>
+							<span>${iiscEsc(__(a.title))}</span>
+							<span class="iisc-side-chevron">${iiscSvg("chevron", 14)}</span>
+						</button>
+						<div class="iisc-side-items">${items}</div>
+					</div>`;
+			})
+			.join("");
+
+		const fullName = frappe.session.user_fullname || frappe.session.user;
+		const initials = fullName.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+		const role = frappe.user_roles.includes("HR Manager")
+			? __("HR Manager")
+			: frappe.user_roles.includes("System Manager")
+			? __("System Manager")
+			: frappe.user_roles.includes("HR User")
+			? __("HR User")
+			: __("Employee");
+
+		return `
+			<aside class="iisc-side">
+				<div class="iisc-side-brand">
+					<img src="/assets/iisc_theme/images/iisc-logo.svg" alt="IISc" onerror="this.style.display='none'">
+					<div class="iisc-side-brand-text">${__("HR Portal")}</div>
+				</div>
+				<div class="iisc-side-section">${__("My Work")}</div>
+				<button class="iisc-side-item active" data-home>
+					<span class="iisc-side-icon">${iiscSvg("grid")}</span>
+					<span class="iisc-side-label">${__("Dashboard")}</span>
+				</button>
+				<div class="iisc-side-scroll">${groups}</div>
+				<div class="iisc-side-user">
+					<span class="iisc-side-avatar">${iiscEsc(initials)}</span>
+					<span class="iisc-side-user-text">
+						<span class="iisc-side-user-name">${iiscEsc(fullName)}</span>
+						<span class="iisc-side-user-role">${role}</span>
+					</span>
+					<button class="iisc-side-logout" data-logout title="${__("Logout")}">${iiscSvg("logout")}</button>
+				</div>
+			</aside>`;
+	},
+
+	// --- main area ---
+	actions() {
+		return [
+			{ doctype: "Employee", label: __("Add Employee"), primary: true },
+			{ doctype: "Leave Application", label: __("Leave Application") },
+			{ doctype: "Attendance", label: __("Mark Attendance") },
+			{ doctype: "Payroll Entry", label: __("Payroll Entry") },
+		]
+			.filter((a) => frappe.model.can_create(a.doctype))
+			.map(
+				(a) => `
+				<button class="iisc-btn ${a.primary ? "iisc-btn-primary" : "iisc-btn-outline"}" data-new="${a.doctype}">
+					${a.primary ? iiscSvg("plus", 16) : ""}${a.label}
+				</button>`
+			)
+			.join("");
 	},
 
 	card({ key, icon, tone, label, value, caption, subs }) {
@@ -125,30 +239,10 @@ const iiscDashboard = {
 			</div>`;
 	},
 
-	actions() {
-		const items = [
-			{ doctype: "Employee", label: __("Add Employee"), primary: true },
-			{ doctype: "Leave Application", label: __("Leave Application") },
-			{ doctype: "Attendance", label: __("Mark Attendance") },
-			{ doctype: "Payroll Entry", label: __("Payroll Entry") },
-		].filter((a) => frappe.model.can_create(a.doctype));
-
-		return items
-			.map(
-				(a) => `
-				<button class="iisc-btn ${a.primary ? "iisc-btn-primary" : "iisc-btn-outline"}" data-new="${a.doctype}">
-					${a.primary ? iiscSvg("plus") : ""}${a.label}
-				</button>`
-			)
-			.join("");
-	},
-
-	shell() {
-		const name = frappe.utils.escape_html(
-			(frappe.boot.user && frappe.boot.user.first_name) || frappe.session.user_fullname || ""
-		);
+	main() {
+		const name = iiscEsc((frappe.boot.user && frappe.boot.user.first_name) || frappe.session.user_fullname || "");
 		return `
-			<div class="iisc-dash">
+			<section class="iisc-main">
 				<div class="iisc-dash-head">
 					<div>
 						<h2 class="iisc-dash-title">${this.greeting()}, ${name}!</h2>
@@ -157,10 +251,30 @@ const iiscDashboard = {
 					<div class="iisc-dash-actions">${this.actions()}</div>
 				</div>
 				<div class="iisc-dash-cards"><div class="iisc-dash-loading">${__("Loading…")}</div></div>
-			</div>`;
+				<div class="iisc-panels">
+					<div class="iisc-panel">
+						<h3 class="iisc-panel-title">${__("Overview")}</h3>
+						<p class="iisc-panel-sub">${__("Approval rate by module")}</p>
+						<div class="iisc-overview"></div>
+					</div>
+					<div class="iisc-panel">
+						<div class="iisc-panel-head">
+							<div>
+								<h3 class="iisc-panel-title">${__("Requests Over Time")}</h3>
+								<p class="iisc-panel-sub">${__("Monthly requests across HR modules.")}</p>
+							</div>
+							<select class="iisc-select" data-months>
+								<option value="6">${__("Last 6 Months")}</option>
+								<option value="12">${__("Last 12 Months")}</option>
+							</select>
+						</div>
+						<div class="iisc-chart"></div>
+					</div>
+				</div>
+			</section>`;
 	},
 
-	fill(root, d) {
+	fillCards(root, d) {
 		const e = d.employees, l = d.leaves, a = d.attendance, s = d.salary_slips, h = d.holidays;
 		root.querySelector(".iisc-dash-cards").innerHTML = [
 			this.card({
@@ -205,7 +319,48 @@ const iiscDashboard = {
 				subs: [{ value: h.this_month, label: __("This Month"), tone: "tone-navy" }],
 			}),
 		].join("");
-		this.data = d;
+	},
+
+	fillOverview(root, rows) {
+		const el = root.querySelector(".iisc-overview");
+		if (!rows || !rows.length) {
+			el.innerHTML = `<div class="iisc-dash-loading">${__("No data yet.")}</div>`;
+			return;
+		}
+		el.innerHTML = rows
+			.map((r) => {
+				const pct = r.total ? Math.round((r.approved / r.total) * 100) : 0;
+				return `
+				<div class="iisc-ov-row" data-list="${iiscEsc(r.doctype)}" role="button" tabindex="0">
+					<div class="iisc-ov-top">
+						<span class="iisc-ov-label">${iiscEsc(__(r.label))}</span>
+						<span class="iisc-ov-total">${iiscEsc(r.total)} ${__("Total")}</span>
+					</div>
+					<div class="iisc-ov-bar"><span style="width:${pct}%"></span></div>
+					<div class="iisc-ov-foot">
+						<span>${iiscEsc(r.approved)} ${__("Approved")}</span>
+						<span>${pct}% ${__("Approval Rate")}</span>
+					</div>
+				</div>`;
+			})
+			.join("");
+	},
+
+	fillChart(root, series) {
+		const el = root.querySelector(".iisc-chart");
+		if (!series || !series.datasets || !series.datasets.length) {
+			el.innerHTML = `<div class="iisc-dash-loading">${__("No data yet.")}</div>`;
+			return;
+		}
+		el.innerHTML = "";
+		this.chart = new frappe.Chart(el, {
+			data: { labels: series.labels, datasets: series.datasets },
+			type: "bar",
+			height: 260,
+			colors: ["#108896", "#1b374c", "#ee5030"],
+			barOptions: { spaceRatio: 0.45 },
+			axisOptions: { xIsSeries: true },
+		});
 	},
 
 	open(key) {
@@ -225,10 +380,18 @@ const iiscDashboard = {
 
 	bind(root) {
 		root.addEventListener("click", (ev) => {
-			const btn = ev.target.closest("[data-new]");
-			if (btn) return frappe.new_doc(btn.dataset.new);
-			const card = ev.target.closest("[data-card]");
-			if (card) this.open(card.dataset.card);
+			const t = ev.target;
+			const newBtn = t.closest("[data-new]");
+			if (newBtn) return frappe.new_doc(newBtn.dataset.new);
+			const card = t.closest("[data-card]");
+			if (card) return this.open(card.dataset.card);
+			const ov = t.closest("[data-list]");
+			if (ov) return frappe.set_route("List", ov.dataset.list);
+			const mod = t.closest("[data-module]");
+			if (mod) return this.openModule(mod.dataset.type, mod.dataset.module, mod.dataset.url);
+			const grp = t.closest("[data-toggle-group]");
+			if (grp) return grp.parentElement.classList.toggle("open");
+			if (t.closest("[data-logout]")) return frappe.app.logout();
 		});
 		root.addEventListener("keydown", (ev) => {
 			const card = ev.target.closest("[data-card]");
@@ -237,25 +400,25 @@ const iiscDashboard = {
 				this.open(card.dataset.card);
 			}
 		});
+		root.querySelector("[data-months]").addEventListener("change", (ev) => {
+			this.months = Number(ev.target.value) || 6;
+			this.load(root);
+		});
 	},
 
-	render() {
-		if (!this.isAppsScreen() || this.loading) return;
-		// Inserted as a sibling *before* .desktop-container (a centred flex
-		// row that holds Frappe's app icons) so the icons stay untouched.
-		const container = document.querySelector("#page-desktop .desktop-container");
-		const wrapper = container.parentElement;
-		let root = wrapper.querySelector(":scope > .iisc-dash");
-		if (!root) {
-			container.insertAdjacentHTML("beforebegin", this.shell());
-			root = wrapper.querySelector(":scope > .iisc-dash");
-			this.bind(root);
-		}
-
+	load(root) {
+		if (this.loading) return;
 		this.loading = true;
 		frappe
-			.call({ method: "iisc_theme.api.get_hr_dashboard", freeze: false })
-			.then((r) => r.message && this.fill(root, r.message))
+			.call({ method: "iisc_theme.api.get_hr_dashboard", args: { months: this.months }, freeze: false })
+			.then((r) => {
+				const d = r.message;
+				if (!d) return;
+				this.data = d;
+				this.fillCards(root, d);
+				this.fillOverview(root, d.overview);
+				this.fillChart(root, d.series);
+			})
 			.catch(() => {
 				const cards = root.querySelector(".iisc-dash-cards");
 				if (cards) cards.innerHTML = `<div class="iisc-dash-loading">${__("Could not load HR numbers.")}</div>`;
@@ -263,10 +426,32 @@ const iiscDashboard = {
 			.finally(() => (this.loading = false));
 	},
 
+	render() {
+		if (!this.isAppsScreen()) return false;
+		// Inserted as a sibling of .desktop-container (Frappe's icon grid),
+		// which CSS hides while .iisc-home is present.
+		const container = document.querySelector("#page-desktop .desktop-container");
+		const wrapper = container.parentElement;
+		let root = wrapper.querySelector(":scope > .iisc-home");
+		if (!root) {
+			container.insertAdjacentHTML("beforebegin", `<div class="iisc-home">${this.sidebar()}${this.main()}</div>`);
+			root = wrapper.querySelector(":scope > .iisc-home");
+			this.bind(root);
+		}
+		this.load(root);
+		return true;
+	},
+
+	// Frappe draws the Apps screen asynchronously — retry for a few seconds.
+	ensure(tries = 24) {
+		if (this.render() || tries <= 0) return;
+		setTimeout(() => this.ensure(tries - 1), 250);
+	},
+
 	init() {
-		this.render();
+		this.ensure();
 		if (window.frappe && frappe.router) {
-			frappe.router.on("change", () => setTimeout(() => this.render(), 300));
+			frappe.router.on("change", () => setTimeout(() => this.ensure(), 150));
 		}
 	},
 };
@@ -274,6 +459,6 @@ const iiscDashboard = {
 $(document).ready(() =>
 	setTimeout(() => {
 		iiscFooter.init();
-		iiscDashboard.init();
+		iiscHome.init();
 	}, 200)
 );
