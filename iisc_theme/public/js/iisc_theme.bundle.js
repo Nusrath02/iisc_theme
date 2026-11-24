@@ -74,7 +74,7 @@ const iiscFooter = {
 };
 
 // ---------- 3. IISc HR home on the Apps screen (/desk) ----------
-// Replaces Frappe's app-icon grid with an HR portal home (layout from the
+// Replaces Frappe's app-icon grid with the IISc Desk home (layout from the
 // approved Gemini design, IISc palette): full-height module sidebar built
 // from frappe.boot.app_data (same modules as the v16 dock), top bar,
 // greeting, KPI cards, requests chart, approval overview, pending approval
@@ -100,7 +100,12 @@ const IISC_ICONS = {
 	attendance: '<path d="M20 6L9 17l-5-5"/>',
 	payroll: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
 	arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
+	cake: '<path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20M7 8v3M12 8v3M17 8v3M7 4h.01M12 4h.01M17 4h.01"/>',
+	award: '<circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/>',
 };
+
+// IISc palette for charts (navy, teal, orange, blue + softer steps)
+const IISC_CHART = ["#1b374c", "#108896", "#ee5030", "#006699", "#5b7f95", "#7cc4cc", "#f4a08d", "#9aa9b5", "#c7d3db"];
 
 const iiscSvg = (name, size = 18) =>
 	`<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IISC_ICONS[name]}</svg>`;
@@ -115,6 +120,7 @@ const IISC_BADGE_MODULES = {
 
 const iiscHome = {
 	months: 6,
+	mix: "workforce",
 	data: null,
 
 	isAppsScreen() {
@@ -207,8 +213,8 @@ const iiscHome = {
 				<div class="iisc-side-brand">
 					<span class="iisc-side-logo">IISc</span>
 					<span class="iisc-side-brand-text">
-						<span class="iisc-side-brand-title">${__("Frappe HR")} ${hrVersion ? `<span class="iisc-side-ver">v${iiscEsc(hrVersion)}</span>` : ""}</span>
-						<span class="iisc-side-brand-sub">${__("HR & Payroll Portal")}</span>
+						<span class="iisc-side-brand-title">${__("IISc Desk")} ${hrVersion ? `<span class="iisc-side-ver">v${iiscEsc(hrVersion)}</span>` : ""}</span>
+						<span class="iisc-side-brand-sub">${__("Indian Institute of Science")}</span>
 					</span>
 				</div>
 				<div class="iisc-side-scroll">
@@ -242,6 +248,10 @@ const iiscHome = {
 					<kbd>Ctrl K</kbd>
 				</button>
 				<div class="iisc-topbar-right">
+					<select class="iisc-select" data-months title="${__("Period for monthly charts")}">
+						<option value="6">${__("Last 6 Months")}</option>
+						<option value="12">${__("Last 12 Months")}</option>
+					</select>
 					<button class="iisc-icon-btn" data-notifications title="${__("Notifications")}">
 						${iiscSvg("bell", 18)}<span class="iisc-dot" hidden></span>
 					</button>
@@ -268,15 +278,30 @@ const iiscHome = {
 			.join("");
 	},
 
+	chartCard(key, title, sub, meta = "") {
+		return `
+			<div class="iisc-card iisc-pad">
+				<div class="iisc-card-head">
+					<div>
+						<h3 class="iisc-card-title">${title}</h3>
+						<p class="iisc-card-sub">${sub}</p>
+					</div>
+					${meta}
+				</div>
+				<div class="iisc-chart" data-chart="${key}"></div>
+			</div>`;
+	},
+
 	main() {
 		const name = iiscEsc((frappe.boot.user && frappe.boot.user.first_name) || frappe.session.user_fullname || "");
 		const dateStr = moment().format("ddd, MMM D, YYYY");
+		const period = `<span class="iisc-card-meta" data-period-label>${__("Last {0} months", [this.months])}</span>`;
 		return `
 			<main class="iisc-main">
 				<section class="iisc-card iisc-hero">
 					<div>
 						<h2 class="iisc-hero-title">${this.greeting()}, ${name}! <span class="iisc-pill">${this.role()}</span></h2>
-						<p class="iisc-hero-sub">${__("Here is what's happening across Indian Institute of Science HR today")} • <b>${iiscEsc(dateStr)}</b></p>
+						<p class="iisc-hero-sub">${__("Here is what's happening across the Indian Institute of Science today")} • <b>${iiscEsc(dateStr)}</b></p>
 					</div>
 					<div class="iisc-hero-actions">${this.actions()}</div>
 				</section>
@@ -284,29 +309,39 @@ const iiscHome = {
 				<section class="iisc-kpis"><div class="iisc-muted">${__("Loading…")}</div></section>
 
 				<section class="iisc-row iisc-row-chart">
+					${this.chartCard("series", __("Requests Over Time"), __("Leave, expense and attendance requests raised each month"), period)}
 					<div class="iisc-card iisc-pad">
 						<div class="iisc-card-head">
 							<div>
-								<h3 class="iisc-card-title">${__("Requests Over Time")}</h3>
-								<p class="iisc-card-sub">${__("Monthly HR volume across leaves, expenses & attendance")}</p>
+								<h3 class="iisc-card-title">${__("Approval Overview")}</h3>
+								<p class="iisc-card-sub">${__("Approved vs total, by request type")}</p>
 							</div>
-							<select class="iisc-select" data-months>
-								<option value="6">${__("Last 6 Months")}</option>
-								<option value="12">${__("Last 12 Months")}</option>
-							</select>
-						</div>
-						<div class="iisc-chart"></div>
-					</div>
-					<div class="iisc-card iisc-pad">
-						<div class="iisc-card-head">
-							<div>
-								<h3 class="iisc-card-title">${__("Overview")}</h3>
-								<p class="iisc-card-sub">${__("Track pending vs processed employee workflows")}</p>
-							</div>
-							<span class="iisc-card-meta">${__("Approval rate by module")}</span>
 						</div>
 						<div class="iisc-overview"></div>
 					</div>
+				</section>
+
+				<section class="iisc-row iisc-row-chart">
+					${this.chartCard("departments", __("Headcount by Department"), __("Active staff in each department / centre"))}
+					${this.chartCard(
+						"workforce",
+						__("Workforce Mix"),
+						__("Active staff by employment type or gender"),
+						`<div class="iisc-seg" data-mix>
+							<button class="active" data-mix-key="workforce">${__("Type")}</button>
+							<button data-mix-key="gender">${__("Gender")}</button>
+						</div>`
+					)}
+				</section>
+
+				<section class="iisc-row iisc-row-chart">
+					${this.chartCard("attendance_trend", __("Attendance — Last 14 Days"), __("Daily present, on-leave and absent records"))}
+					${this.chartCard("leave_types", __("Leave Days by Type"), __("Approved leave days this year"))}
+				</section>
+
+				<section class="iisc-row iisc-row-chart">
+					${this.chartCard("payroll", __("Payroll Cost"), __("Gross and net pay from submitted salary slips"), `<span class="iisc-card-meta" data-payroll-total></span>`)}
+					${this.chartCard("movement", __("Joiners vs Relieved"), __("Staff movement each month"), period)}
 				</section>
 
 				<section class="iisc-row iisc-row-bottom">
@@ -327,6 +362,13 @@ const iiscHome = {
 								<button class="iisc-link" data-holidays>${__("View Calendar")}</button>
 							</div>
 							<div class="iisc-holidays"></div>
+						</div>
+						<div class="iisc-card iisc-pad">
+							<div class="iisc-card-head">
+								<h3 class="iisc-card-title iisc-with-icon">${iiscSvg("cake", 16)} ${__("Celebrations")}</h3>
+								<span class="iisc-card-meta">${__("Next 30 days")}</span>
+							</div>
+							<div class="iisc-celebrations"></div>
 						</div>
 						<div class="iisc-notice"></div>
 					</div>
@@ -406,21 +448,109 @@ const iiscHome = {
 	},
 
 	// ---------------- chart ----------------
-	fillChart(root, series) {
-		const el = root.querySelector(".iisc-chart");
-		if (!series || !series.datasets || !series.datasets.length) {
-			el.innerHTML = `<div class="iisc-empty">${__("No data yet.")}</div>`;
+	// ---------------- charts ----------------
+	CHARTS: {
+		series: { type: "line", colors: ["#1b374c", "#ee5030", "#108896"], empty: "No requests raised in this period yet." },
+		departments: { type: "hbar", empty: "Add employees with a department to see headcount here." },
+		workforce: { type: "donut", colors: IISC_CHART, empty: "Add active employees to see the workforce mix." },
+		gender: { type: "donut", colors: IISC_CHART, empty: "Add active employees to see the gender mix." },
+		attendance_trend: { type: "bar", stacked: true, colors: ["#108896", "#006699", "#ee5030"], empty: "No attendance marked in the last 14 days." },
+		leave_types: { type: "pie", colors: IISC_CHART, empty: "No approved leave this year yet." },
+		payroll: { type: "bar", colors: ["#1b374c", "#108896"], money: true, empty: "No submitted salary slips in this period yet." },
+		movement: { type: "bar", colors: ["#108896", "#ee5030"], empty: "No joiners or relieved staff in this period." },
+	},
+
+	hasData(data) {
+		if (!data) return false;
+		const sets = data.datasets || (data.values ? [{ values: data.values }] : []);
+		return sets.some((ds) => (ds.values || []).some((v) => Number(v) > 0));
+	},
+
+	drawChart(root, key, data, slot = key) {
+		const el = root.querySelector(`[data-chart="${slot}"]`);
+		const cfg = this.CHARTS[key];
+		if (!el || !cfg) return;
+		if (!this.hasData(data)) {
+			el.innerHTML = `<div class="iisc-empty iisc-chart-empty">${iiscSvg("grid", 22)}<span>${__(cfg.empty)}</span></div>`;
+			return;
+		}
+		if (cfg.type === "hbar") {
+			// Horizontal bars in HTML: long department names stay readable
+			const max = Math.max(...data.values, 1);
+			const total = data.values.reduce((a, b) => a + b, 0);
+			el.innerHTML = `<div class="iisc-hbars">${data.labels
+				.map((label, i) => {
+					const v = data.values[i];
+					return `
+					<div class="iisc-hbar" title="${iiscEsc(label)}: ${iiscEsc(v)}">
+						<span class="iisc-hbar-label">${iiscEsc(label)}</span>
+						<span class="iisc-hbar-track"><span style="width:${Math.max(2, (v / max) * 100)}%"></span></span>
+						<span class="iisc-hbar-value"><b>${iiscEsc(v)}</b> <small>${Math.round((v / total) * 100)}%</small></span>
+					</div>`;
+				})
+				.join("")}</div>`;
 			return;
 		}
 		el.innerHTML = "";
-		new frappe.Chart(el, {
-			data: { labels: series.labels, datasets: series.datasets },
-			type: "line",
-			height: 280,
-			colors: ["#1b374c", "#ee5030", "#108896"],
-			lineOptions: { regionFill: 1, dotSize: 5, spline: 1 },
-			axisOptions: { xIsSeries: true, xAxisMode: "tick", yAxisMode: "span" },
-		});
+		const datasets = data.datasets || [{ name: __("Staff"), values: data.values }];
+		const opts = {
+			data: { labels: data.labels, datasets },
+			type: cfg.type,
+			height: cfg.type === "donut" || cfg.type === "pie" ? 250 : 260,
+			colors: cfg.colors,
+			axisOptions: { xIsSeries: cfg.type === "line", xAxisMode: "tick", yAxisMode: "span", shortenYAxisNumbers: 1 },
+		};
+		if (cfg.type === "line") opts.lineOptions = { regionFill: 1, dotSize: 5, spline: 1 };
+		if (cfg.type === "bar") opts.barOptions = { stacked: cfg.stacked ? 1 : 0, spaceRatio: 0.45 };
+		if (cfg.money) {
+			const cur = data.currency;
+			opts.tooltipOptions = { formatTooltipY: (v) => format_currency(v, cur) };
+		}
+		try {
+			new frappe.Chart(el, opts);
+		} catch (e) {
+			el.innerHTML = `<div class="iisc-empty">${__("Could not draw this chart.")}</div>`;
+		}
+	},
+
+	fillCharts(root, d) {
+		const ins = d.insights || {};
+		this.drawChart(root, "series", d.series);
+		this.drawChart(root, "departments", ins.departments);
+		this.drawChart(root, this.mix, ins[this.mix], "workforce");
+		this.drawChart(root, "attendance_trend", ins.attendance_trend);
+		this.drawChart(root, "leave_types", ins.leave_types);
+		this.drawChart(root, "payroll", ins.payroll);
+		this.drawChart(root, "movement", ins.movement);
+
+		const total = root.querySelector("[data-payroll-total]");
+		if (total) {
+			const p = ins.payroll;
+			total.textContent = p && p.total_gross ? `${__("Total")} ${format_currency(p.total_gross, p.currency)}` : "";
+		}
+		root.querySelectorAll("[data-period-label]").forEach((e) => (e.textContent = __("Last {0} months", [this.months])));
+	},
+
+	fillCelebrations(root, items) {
+		const el = root.querySelector(".iisc-celebrations");
+		if (!el) return;
+		if (!items || !items.length) {
+			el.innerHTML = `<div class="iisc-empty">${__("No birthdays or work anniversaries in the next 30 days.")}</div>`;
+			return;
+		}
+		el.innerHTML = items
+			.map((x) => {
+				const isBday = x.kind === "birthday";
+				const when = x.days_left === 0 ? __("Today") : x.days_left === 1 ? __("Tomorrow") : moment(x.date).format("ddd, MMM D");
+				const what = isBday ? __("Birthday") : __("{0} yr work anniversary", [x.years]);
+				return `
+				<div class="iisc-celebrate" data-employee="${iiscEsc(x.employee)}" role="button" tabindex="0">
+					<span class="iisc-celebrate-icon ${isBday ? "t-orange" : "t-teal"}">${iiscSvg(isBday ? "cake" : "award", 15)}</span>
+					<span class="iisc-hol-text"><b>${iiscEsc(x.employee_name)}</b><small>${iiscEsc(what)}${x.department ? ` • ${iiscEsc(x.department)}` : ""}</small></span>
+					<span class="iisc-chip ${x.days_left <= 1 ? "c-orange" : "c-gray"}">${iiscEsc(when)}</span>
+				</div>`;
+			})
+			.join("");
 	},
 
 	// ---------------- overview ----------------
@@ -597,6 +727,14 @@ const iiscHome = {
 			const t = ev.target;
 			const q = (sel) => t.closest(sel);
 			if (q("[data-act]")) return this.act(q("[data-act]"));
+			if (q("[data-mix-key]")) {
+				const b = q("[data-mix-key]");
+				this.mix = b.dataset.mixKey;
+				b.parentElement.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
+				const ins = (this.data && this.data.insights) || {};
+				return this.drawChart(root, this.mix, ins[this.mix], "workforce");
+			}
+			if (q("[data-employee]")) return frappe.set_route("Form", "Employee", q("[data-employee]").dataset.employee);
 			if (q("[data-new]")) return frappe.new_doc(q("[data-new]").dataset.new);
 			if (q("[data-card]")) return this.open(q("[data-card]").dataset.card);
 			if (q("[data-list]")) return frappe.set_route("List", q("[data-list]").dataset.list);
@@ -623,7 +761,9 @@ const iiscHome = {
 				this.open(card.dataset.card);
 			}
 		});
-		root.querySelector("[data-months]").addEventListener("change", (ev) => {
+		const months = root.querySelector("[data-months]");
+		months.value = String(this.months);
+		months.addEventListener("change", (ev) => {
 			this.months = Number(ev.target.value) || 6;
 			this.load(root);
 		});
@@ -639,11 +779,12 @@ const iiscHome = {
 				if (!d || !document.body.contains(root)) return;
 				this.data = d;
 				this.fillKpis(root, d);
-				this.fillChart(root, d.series);
+				this.fillCharts(root, d);
 				this.fillOverview(root, d.overview);
 				this.fillQueue(root, d.pending);
 				this.fillHolidays(root, d.holidays);
 				this.fillNotice(root, d.notice);
+				this.fillCelebrations(root, d.celebrations);
 				this.fillBadges(root, d);
 			})
 			.catch(() => {
@@ -668,7 +809,8 @@ const iiscHome = {
 
 	init() {
 		this.render();
-		// Re-insert whenever Frappe (re)builds the Apps screen or the URL changes.
+		// Re-insert whenever Frappe (re)builds the Apps screen or the URL changes
+		// (dock logo / "All apps", breadcrumbs, browser back/forward, Ctrl+K …).
 		// setTimeout (not requestAnimationFrame) so it never stalls in a background tab.
 		let timer = null;
 		const schedule = () => {
@@ -680,6 +822,18 @@ const iiscHome = {
 		};
 		new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
 		window.addEventListener("popstate", schedule);
+		["pushState", "replaceState"].forEach((fn) => {
+			const original = history[fn];
+			history[fn] = function (...args) {
+				const result = original.apply(this, args);
+				schedule();
+				return result;
+			};
+		});
+		// Last-resort guard: one cheap check a second, only acts on /desk.
+		setInterval(() => {
+			if (this.isAppsScreen() && !document.querySelector("#page-desktop .desktop-wrapper > .iisc-app")) this.render();
+		}, 1000);
 	},
 };
 
