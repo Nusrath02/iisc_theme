@@ -26,6 +26,13 @@
 	padding-bottom: 14px;
 }
 
+/* Frappe gives <body> a fixed 100% height; let it grow so the sticky header
+   (and the application page's section nav) stay put for the whole page */
+body:is([data-path^="jobs"], [data-path^="job_application"]) {
+	height: auto !important;
+	min-height: 100vh;
+}
+
 /* IISc lock-up, as on the IISc programme sites:
    emblem on a white rounded tile + two-line institute name */
 :is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar {
