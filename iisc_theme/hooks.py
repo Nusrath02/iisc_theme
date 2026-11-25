@@ -15,7 +15,8 @@ app_include_css = ["iisc_theme.bundle.css", "iisc_modules.bundle.css"]
 app_include_js = ["iisc_theme.bundle.js", "iisc_modules.bundle.js"]
 
 # Website / login page assets
-web_include_css = ["iisc_theme.bundle.css"]
+web_include_css = ["iisc_theme.bundle.css", "iisc_web.bundle.css"]
+web_include_js = ["iisc_web.bundle.js"]
 
 website_context = {
 	"favicon": "/assets/iisc_theme/images/favicon.png",

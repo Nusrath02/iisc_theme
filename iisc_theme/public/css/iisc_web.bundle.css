@@ -1,0 +1,422 @@
+/* =====================================================================
+   IISc website theme — careers page (/jobs and /jobs/<opening>)
+   Scoped to body[data-path^="jobs"], so no other website page changes.
+   Palette: Navy #1B374C | Teal #108896 | Orange #EE5030
+   ===================================================================== */
+
+body[data-path^="jobs"] {
+	--iisc-navy: #1b374c;
+	--iisc-teal: #108896;
+	--iisc-orange: #ee5030;
+	--iisc-tint: #e7f3f5;
+	--iisc-border: #e6e9ee;
+	--iisc-muted: #667085;
+	background: #f4f6f8;
+	color: #101828;
+	font-family: "Source Sans 3", "Source Sans Pro", Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
+	font-size: 15px;
+}
+
+/* ---------- header ---------- */
+body[data-path^="jobs"] .navbar {
+	background: var(--iisc-navy) !important;
+	border-bottom: 0;
+	box-shadow: none;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+body[data-path^="jobs"] .navbar .navbar-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	color: #ffffff;
+}
+
+.iisc-web-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 10px;
+	background: var(--iisc-teal);
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 800;
+}
+
+.iisc-web-brand {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.15;
+}
+
+.iisc-web-brand b {
+	font-size: 16px;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.iisc-web-brand small {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.7);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+body[data-path^="jobs"] .navbar .nav-link,
+body[data-path^="jobs"] .navbar .navbar-toggler {
+	color: #ffffff;
+	--icon-stroke: #ffffff;
+}
+
+/* account menu in IISc teal, like every other menu */
+body[data-path^="jobs"] .navbar .dropdown-menu {
+	background: var(--iisc-teal);
+	border-color: var(--iisc-teal);
+}
+
+body[data-path^="jobs"] .navbar .dropdown-item {
+	color: #ffffff;
+}
+
+body[data-path^="jobs"] .navbar .dropdown-item:hover {
+	background: var(--iisc-navy);
+	color: #ffffff;
+}
+
+/* ---------- hero ---------- */
+.iisc-careers-hero {
+	padding: 44px 0 40px;
+	background:
+		radial-gradient(circle at 85% 20%, rgba(16, 136, 150, 0.45), transparent 45%),
+		var(--iisc-navy);
+	color: #ffffff;
+}
+
+.iisc-careers-tag {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: var(--iisc-orange);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.iisc-careers-hero h1 {
+	max-width: 760px;
+	margin: 14px 0 8px;
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: 36px;
+	font-weight: 500;
+	line-height: 1.2;
+	color: #ffffff;
+}
+
+.iisc-careers-hero p {
+	max-width: 680px;
+	margin: 0;
+	font-size: 16px;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.iisc-careers-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-top: 24px;
+}
+
+.iisc-careers-stats > div {
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+	padding: 12px 18px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.07);
+}
+
+.iisc-careers-stats b {
+	font-size: 26px;
+	font-weight: 800;
+	line-height: 1.1;
+}
+
+.iisc-careers-stats span {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.72);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* the hero replaces the plain breadcrumb + "Job Openings" heading */
+body.iisc-careers[data-path="jobs"] .page-breadcrumbs,
+body.iisc-careers[data-path="jobs"] .page-header-wrapper {
+	display: none;
+}
+
+body[data-path^="jobs"] main.container {
+	padding-top: 28px;
+	padding-bottom: 40px;
+}
+
+/* ---------- filters ---------- */
+body[data-path^="jobs"] .page_content .col-3.text-15 {
+	align-self: flex-start;
+	padding: 20px;
+	border: 1px solid var(--iisc-border);
+	border-radius: 16px;
+	background: #ffffff;
+}
+
+body[data-path^="jobs"] .page_content .col-3.text-15 .text-18 {
+	font-size: 17px;
+	color: var(--iisc-navy);
+}
+
+body[data-path^="jobs"] [name="clear-filters"] {
+	color: var(--iisc-teal);
+	font-size: 13px;
+	font-weight: 700;
+}
+
+body[data-path^="jobs"] .page_content .col-3.text-15 hr {
+	margin: 14px 0 6px;
+	border-color: var(--iisc-border);
+}
+
+.iisc-filter-group {
+	padding: 12px 0;
+	border-bottom: 1px solid #eef0f3;
+}
+
+.iisc-filter-group:last-child {
+	border-bottom: 0;
+}
+
+.iisc-filter-title {
+	margin: 0 0 8px;
+	color: var(--iisc-muted);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.iisc-filter-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+body[data-path^="jobs"] .form-check-input:checked {
+	background-color: var(--iisc-teal);
+	border-color: var(--iisc-teal);
+}
+
+/* ---------- search + sort ---------- */
+body[data-path^="jobs"] #search-box {
+	height: 44px !important;
+	border-radius: 12px;
+	border-color: var(--iisc-border) !important;
+	background: #ffffff;
+	font-size: 15px;
+}
+
+body[data-path^="jobs"] #search-box:focus {
+	border-color: var(--iisc-teal) !important;
+	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.15);
+}
+
+body[data-path^="jobs"] .btn-group.border {
+	border-radius: 12px !important;
+	overflow: hidden;
+}
+
+body[data-path^="jobs"] .btn-group .btn,
+body[data-path^="jobs"] .btn-group > div {
+	color: var(--iisc-navy);
+	--icon-stroke: var(--iisc-navy);
+}
+
+body[data-path^="jobs"] .page_content p.text-secondary {
+	color: var(--iisc-muted) !important;
+	font-weight: 600;
+}
+
+/* ---------- job cards (real HRMS cards and samples) ---------- */
+body[data-path^="jobs"] .page_content .card {
+	border: 1px solid var(--iisc-border) !important;
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	overflow: hidden;
+	transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+body[data-path^="jobs"] .page_content .card:hover {
+	border-color: rgba(16, 136, 150, 0.55) !important;
+	box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+	transform: translateY(-2px);
+}
+
+body[data-path^="jobs"] .page_content .card h4.jobs-page {
+	color: var(--iisc-navy);
+	font-size: 17px;
+	font-weight: 700;
+}
+
+body[data-path^="jobs"] .full-time-badge,
+body[data-path^="jobs"] .part-time-badge,
+body[data-path^="jobs"] .other-badge {
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+body[data-path^="jobs"] .full-time-badge {
+	background: rgba(16, 136, 150, 0.12);
+	color: #0c6d78;
+}
+
+body[data-path^="jobs"] .part-time-badge {
+	background: rgba(238, 80, 48, 0.12);
+	color: #c8401f;
+}
+
+body[data-path^="jobs"] .other-badge {
+	background: rgba(27, 55, 76, 0.1);
+	color: var(--iisc-navy);
+}
+
+body[data-path^="jobs"] .job-card-footer {
+	border-top: 1px solid #eef0f3;
+	background: #fafbfc;
+	color: var(--iisc-muted);
+}
+
+.iisc-job-body {
+	padding: 20px 20px 16px;
+	flex: 1;
+}
+
+.iisc-job-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.iisc-job-top h4 {
+	margin: 0;
+	line-height: 1.3;
+}
+
+.iisc-job-co {
+	margin: 6px 0 14px;
+	color: var(--iisc-muted);
+	font-size: 13px;
+}
+
+.iisc-job-co b {
+	color: #101828;
+}
+
+.iisc-job-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	font-size: 14px;
+	color: #344054;
+}
+
+.iisc-job-meta span,
+.iisc-job-foot span {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.iisc-job-meta svg {
+	flex-shrink: 0;
+	color: var(--iisc-teal);
+}
+
+.iisc-job-foot {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 12px 20px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.iisc-job-empty {
+	padding: 40px 0;
+	color: var(--iisc-muted);
+	text-align: center;
+}
+
+/* small notice for sample cards */
+.iisc-web-toast {
+	position: fixed;
+	left: 50%;
+	bottom: 28px;
+	z-index: 2000;
+	max-width: 90vw;
+	padding: 12px 18px;
+	border-radius: 12px;
+	background: var(--iisc-navy, #1b374c);
+	color: #ffffff;
+	font-size: 14px;
+	box-shadow: 0 12px 28px rgba(16, 24, 40, 0.25);
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, 10px);
+	transition: opacity 0.2s, transform 0.2s;
+}
+
+.iisc-web-toast.show {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+/* ---------- footer ---------- */
+body[data-path^="jobs"] .web-footer {
+	margin-top: 0;
+	padding: 18px 0;
+	background: var(--iisc-navy);
+	border-top: 0;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+body[data-path^="jobs"] .web-footer .footer-logo-extension,
+body[data-path^="jobs"] .web-footer .footer-links {
+	display: none;
+}
+
+body[data-path^="jobs"] .web-footer .footer-info {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+body[data-path^="jobs"] .web-footer .footer-powered,
+body[data-path^="jobs"] .web-footer .footer-powered a {
+	color: rgba(255, 255, 255, 0.85) !important;
+	font-size: 13px;
+}
+
+@media (max-width: 767.98px) {
+	.iisc-careers-hero h1 {
+		font-size: 26px;
+	}
+}

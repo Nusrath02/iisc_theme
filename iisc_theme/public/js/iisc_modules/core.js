@@ -378,10 +378,6 @@ const iiscModules = {
 						</select>
 					</div>
 				</section>
-				<div class="iisc-demo" hidden>
-					<span class="iisc-demo-tag">${__("Sample data")}</span>
-					<span>${__("No records in this module yet, so example figures are shown. Live data replaces them automatically.")}</span>
-				</div>
 				<div class="iisc-mod-body"><div class="iisc-muted iisc-pad">${__("Loading…")}</div></div>
 			</div>`
 		);
@@ -397,7 +393,6 @@ const iiscModules = {
 				const d = r && r.message;
 				if (!d || !document.body.contains(root)) return;
 				root.iiscData = d;
-				root.querySelector(".iisc-demo").hidden = !d.demo;
 				root.querySelector(".iisc-mod-body").innerHTML = cfg.layout(d, this.h, this);
 				if (cfg.charts) cfg.charts(root, d, this);
 			})

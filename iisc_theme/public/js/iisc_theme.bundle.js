@@ -306,11 +306,6 @@ const iiscHome = {
 					<div class="iisc-hero-actions">${this.actions()}</div>
 				</section>
 
-				<div class="iisc-demo" hidden>
-					<span class="iisc-demo-tag">${__("Sample data")}</span>
-					<span>${__("This site has no HR records yet, so the dashboard is showing example figures. It switches to live data automatically once employees are added.")}</span>
-				</div>
-
 				<section class="iisc-kpis"><div class="iisc-muted">${__("Loading…")}</div></section>
 
 				<section class="iisc-row iisc-row-chart">
@@ -807,8 +802,6 @@ const iiscHome = {
 				const d = r.message;
 				if (!d || !document.body.contains(root)) return;
 				this.data = d;
-				const demo = root.querySelector(".iisc-demo");
-				if (demo) demo.hidden = !d.demo;
 				this.fillKpis(root, d);
 				this.fillCharts(root, d);
 				this.fillOverview(root, d.overview);
