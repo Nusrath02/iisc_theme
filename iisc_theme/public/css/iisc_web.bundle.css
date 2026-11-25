@@ -26,85 +26,68 @@
 	padding-bottom: 14px;
 }
 
+/* Frappe gives <body> a fixed 100% height; let it grow so the sticky header
+   (and the application page's section nav) stay put for the whole page */
+body:is([data-path^="jobs"], [data-path^="job_application"]) {
+	height: auto !important;
+	min-height: 100vh;
+}
+
+/* IISc lock-up, as on the IISc programme sites:
+   emblem on a white rounded tile + two-line institute name */
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar {
+	position: sticky;
+	top: 0;
+	z-index: 1030;
+	box-shadow: 0 1px 28px rgba(0, 0, 0, 0.35);
+}
+
 :is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand {
 	display: inline-flex;
 	align-items: center;
-	gap: 12px;
+	gap: 14px;
+	margin-right: auto;
 	color: #ffffff;
 }
 
-/* Full IISc logo, large and centred like on iisc.ac.in
-   (Frappe caps .navbar-brand img at 22px x 150px — lifted here) */
-:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand img.iisc-web-logo-img {
-	height: 72px;
-	width: auto;
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand img.iisc-web-emblem {
+	width: 52px;
+	height: 52px;
 	max-width: none;
 	max-height: none;
-}
-
-@media (min-width: 768px) {
-	:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar > .container {
-		position: relative;
-		min-height: 84px;
-	}
-
-	:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		margin: 0;
-		padding: 0;
-		transform: translate(-50%, -50%);
-	}
-}
-
-@media (max-width: 767.98px) {
-	:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand img.iisc-web-logo-img {
-		height: 48px;
-	}
-}
-
-.iisc-web-careers {
-	margin-left: 6px;
-	padding: 6px 16px;
-	border-left: 1px solid rgba(255, 255, 255, 0.25);
-	color: rgba(255, 255, 255, 0.85);
-	font-size: 13px;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-}
-
-.iisc-web-logo {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px;
-	height: 40px;
-	border-radius: 10px;
-	background: var(--iisc-teal);
-	color: #ffffff;
-	font-size: 14px;
-	font-weight: 800;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 .iisc-web-brand {
 	display: flex;
 	flex-direction: column;
-	line-height: 1.15;
+	line-height: 1.2;
 }
 
 .iisc-web-brand b {
-	font-size: 16px;
+	font-size: 20px;
 	font-weight: 700;
+	letter-spacing: -0.01em;
 	color: #ffffff;
 }
 
 .iisc-web-brand small {
-	font-size: 12px;
-	color: rgba(255, 255, 255, 0.7);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
+	margin-top: 2px;
+	font-size: 13.5px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 767.98px) {
+	:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand img.iisc-web-emblem {
+		width: 42px;
+		height: 42px;
+	}
+
+	.iisc-web-brand b {
+		font-size: 16px;
+	}
 }
 
 :is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .nav-link,
@@ -524,116 +507,528 @@ body.iisc-careers[data-path="jobs"] .page-header-wrapper {
 	font-weight: 600;
 }
 
-/* ---------- application form (/job_application) ---------- */
-body[data-path^="job_application"] .page-breadcrumbs {
-	display: none;
+/* ---------- application form (/job_application) ----------
+   Dark layout modelled on the IISc programme sites (btech-ug.iisc.ac.in):
+   hero → pill tabs → one panel with a section nav on the left and the form on the right.
+   Colours are the IISc navy / teal / orange only. */
+body.iisc-apply {
+	--ap-bg: #0f2231;
+	--ap-panel: #163045;
+	--ap-side: #122a3c;
+	--ap-input: #0f2231;
+	--ap-line: rgba(255, 255, 255, 0.09);
+	--ap-text: #eef3f7;
+	--ap-muted: #a7bccb;
+	--ap-teal-text: #5cc7d1;
+	background: var(--ap-bg) !important;
+	color: var(--ap-text);
 }
 
-body[data-path^="job_application"] main.container {
-	max-width: 860px;
+body.iisc-apply .page-breadcrumbs,
+body.iisc-apply .page-header-wrapper,
+body.iisc-apply #not-saved-badge {
+	display: none !important;
 }
 
-.iisc-apply-card {
-	margin-bottom: 18px;
-	padding: 22px 24px;
-	border-radius: 16px;
+/* clip (not hidden) so the sticky header and section nav keep working */
+html:has(body.iisc-apply),
+body.iisc-apply {
+	overflow-x: clip;
+}
+
+/* signed-in users get Frappe's "My Account" sidebar here — applicants don't need it */
+body.iisc-apply .sidebar-column {
+	display: none !important;
+}
+
+body.iisc-apply .main-column {
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+
+body.iisc-apply .page-content-wrapper main.container {
+	max-width: 1180px;
+	padding-bottom: 56px;
+}
+
+body.iisc-apply .page_content {
+	max-width: none !important;
+}
+
+/* hero */
+.iisc-apply-hero {
+	/* full-bleed, whatever container Frappe wraps the page in */
+	width: 100vw;
+	margin-left: calc(50% - 50vw);
+	padding: 56px 0 74px;
+	text-align: center;
 	background:
-		radial-gradient(circle at 90% 10%, rgba(16, 136, 150, 0.45), transparent 50%),
-		var(--iisc-navy);
+		radial-gradient(circle at 15% 20%, rgba(16, 136, 150, 0.35), transparent 45%),
+		radial-gradient(circle at 85% 80%, rgba(238, 80, 48, 0.12), transparent 40%),
+		linear-gradient(180deg, #1b374c 0%, #0f2231 100%);
+	border-bottom: 1px solid var(--ap-line);
+}
+
+.iisc-apply-eyebrow {
+	display: inline-block;
+	color: #ee5030;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+}
+
+.iisc-apply-hero h1 {
+	max-width: 900px;
+	margin: 12px auto 0;
+	font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+	font-size: clamp(28px, 3.4vw, 42px);
+	font-weight: 800;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
 	color: #ffffff;
 }
 
-.iisc-apply-card h2 {
-	margin: 12px 0 10px;
-	font-family: "Playfair Display", Georgia, serif;
-	font-size: 26px;
-	font-weight: 500;
-	color: #ffffff;
+.iisc-apply-rule {
+	display: block;
+	width: 56px;
+	height: 3px;
+	margin: 18px auto 0;
+	border-radius: 3px;
+	background: #ee5030;
 }
 
 .iisc-apply-meta {
-	flex-direction: row !important;
+	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 20px !important;
-	color: rgba(255, 255, 255, 0.85) !important;
+	justify-content: center;
+	gap: 10px 26px;
+	margin-top: 18px;
+	color: var(--ap-muted);
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.iisc-apply-meta span {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
 }
 
 .iisc-apply-meta svg {
-	color: #7cc4cc !important;
+	color: var(--ap-teal-text);
 }
 
-.iisc-apply-back {
-	display: inline-block;
-	margin-top: 14px;
-	color: #ffffff;
-	font-size: 13px;
-	font-weight: 700;
-	text-decoration: underline;
-}
-
-body[data-path^="job_application"] .web-form-header,
-body[data-path^="job_application"] form.web-form,
-body[data-path^="job_application"] .success-page {
-	border: 1px solid var(--iisc-border);
+/* pill tabs, overlapping the hero edge */
+.iisc-apply-tabs {
+	display: flex;
+	width: max-content;
+	max-width: calc(100% - 32px);
+	gap: 6px;
+	margin: -30px auto 34px;
+	padding: 7px;
+	overflow-x: auto;
+	border: 1px solid var(--ap-line);
 	border-radius: 16px;
-	background: #ffffff;
-	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	background: #1b374c;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	position: relative;
+	z-index: 2;
 }
 
-body[data-path^="job_application"] .web-form-header {
-	margin-bottom: -1px;
-	padding: 20px 24px 6px;
-	border-bottom: 0;
-	border-radius: 16px 16px 0 0;
+.iisc-apply-tabs a {
+	display: inline-flex;
+	align-items: center;
+	gap: 9px;
+	padding: 11px 22px;
+	border: 1px solid transparent;
+	border-radius: 11px;
+	color: #c9d6df;
+	font-size: 15px;
+	font-weight: 600;
+	white-space: nowrap;
+	text-decoration: none !important;
+	transition: background 0.15s, color 0.15s;
 }
 
-body[data-path^="job_application"] form.web-form {
-	border-top: 0;
-	border-radius: 0 0 16px 16px;
+.iisc-apply-tabs a:hover {
+	background: rgba(255, 255, 255, 0.06);
+	color: #ffffff;
 }
 
-body[data-path^="job_application"] .web-form-title {
-	font-family: "Playfair Display", Georgia, serif;
-	font-weight: 500;
-	color: #ee5030;
+.iisc-apply-tabs a.active {
+	border-color: rgba(255, 255, 255, 0.55);
+	background: #108896;
+	color: #ffffff;
+	box-shadow: 0 4px 14px rgba(16, 136, 150, 0.45);
 }
 
-/* the opening is already shown in the card above */
-body.iisc-apply .frappe-control[data-fieldname="job_title"] {
+/* one panel: nav on the left, form on the right */
+body.iisc-apply .web-form-container {
+	display: grid;
+	grid-template-columns: 250px minmax(0, 1fr);
+	align-items: start;
+	border: 1px solid var(--ap-line);
+	border-radius: 20px;
+	/* left 250px is the nav column; painted here so the nav itself can stick */
+	background: linear-gradient(90deg, var(--ap-side) 0 250px, var(--ap-line) 250px 251px, var(--ap-panel) 251px);
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+body.iisc-apply .web-form-container > :not(.iisc-apply-nav) {
+	grid-column: 2;
+	min-width: 0;
+}
+
+body.iisc-apply .web-form-container > :empty:not(.iisc-apply-nav) {
 	display: none;
 }
 
-body[data-path^="job_application"] .control-label {
-	color: var(--iisc-navy);
+.iisc-apply-nav {
+	grid-column: 1;
+	grid-row: 1 / span 8;
+	align-self: start;
+	position: sticky;
+	top: 96px;
+	padding: 18px 0;
+}
+
+.iisc-apply-nav-title {
+	padding: 6px 22px 10px;
+	color: var(--ap-muted);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.iisc-apply-nav a {
+	display: block;
+	padding: 13px 22px;
+	border-left: 3px solid transparent;
+	color: #c9d6df;
+	font-size: 15.5px;
+	font-weight: 500;
+	text-decoration: none !important;
+	transition: background 0.15s, color 0.15s;
+}
+
+.iisc-apply-nav a:hover {
+	background: rgba(255, 255, 255, 0.04);
+	color: #ffffff;
+}
+
+.iisc-apply-nav a.active {
+	border-left-color: #108896;
+	background: rgba(16, 136, 150, 0.16);
+	color: #ffffff;
+	font-weight: 700;
+}
+
+.iisc-apply-nav-note {
+	margin: 18px 22px 0;
+	padding-top: 16px;
+	border-top: 1px solid var(--ap-line);
+	color: var(--ap-muted);
+	font-size: 13px;
+}
+
+.iisc-apply-nav-note b {
+	color: #ee5030;
+}
+
+/* form header + body sit inside the panel */
+body.iisc-apply .web-form-header,
+body.iisc-apply form.web-form {
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+body.iisc-apply .web-form-header {
+	padding: 34px 44px 0 !important;
+}
+
+body.iisc-apply form.web-form {
+	padding: 0 !important;
+}
+
+/* hero sits right under the header */
+body.iisc-apply .page-content-wrapper {
+	margin-top: 0 !important;
+}
+
+body.iisc-apply .web-form-header .web-form-head,
+body.iisc-apply .web-form-header .title {
+	border: 0;
+	padding: 0;
+}
+
+body.iisc-apply .web-form-title h1 {
+	margin: 0;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--ap-line);
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: 30px;
+	font-weight: 600;
+	color: #ee5030;
+}
+
+body.iisc-apply .web-form-body,
+body.iisc-apply .web-form-wrapper,
+body.iisc-apply .form-layout,
+body.iisc-apply .form-page,
+body.iisc-apply .form-section {
+	border: 0 !important;
+	background: transparent !important;
+}
+
+body.iisc-apply .web-form-body {
+	padding: 0 44px 8px;
+}
+
+body.iisc-apply .form-section {
+	padding: 0 !important;
+}
+
+body.iisc-apply .form-section .section-body {
+	padding-top: 0;
+}
+
+/* the opening is already shown in the hero */
+body.iisc-apply .frappe-control[data-fieldname="job_title"] {
+	display: none !important;
+}
+
+/* group headings: "I) PERSONAL DETAILS" like the course-structure headings */
+.iisc-form-group {
+	scroll-margin-top: 110px;
+	margin: 30px 0 16px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed var(--ap-line);
+	color: var(--ap-teal-text);
+	font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+body.iisc-apply .form-section .section-head {
+	color: var(--ap-teal-text);
+}
+
+/* fields */
+body.iisc-apply .control-label,
+body.iisc-apply .frappe-control label {
+	color: #dbe5ec !important;
+	font-size: 14px;
 	font-weight: 600;
 }
 
-body[data-path^="job_application"] .form-control {
-	border: 1px solid transparent;
+body.iisc-apply .control-label.reqd::after {
+	color: #ee5030;
+}
+
+body.iisc-apply .help-box,
+body.iisc-apply .frappe-control .text-muted {
+	color: var(--ap-muted) !important;
+}
+
+body.iisc-apply .form-control,
+body.iisc-apply .frappe-control input,
+body.iisc-apply .frappe-control textarea,
+body.iisc-apply .frappe-control select {
+	min-height: 44px;
+	border: 1px solid rgba(255, 255, 255, 0.12) !important;
 	border-radius: 10px;
-	background: #f4f6f8;
+	background: var(--ap-input) !important;
+	color: var(--ap-text) !important;
+	font-size: 15px;
+	box-shadow: none;
 }
 
-body[data-path^="job_application"] .form-control:focus {
-	border-color: var(--iisc-teal);
-	background: #ffffff;
-	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.15);
+body.iisc-apply .form-control::placeholder,
+body.iisc-apply .frappe-control input::placeholder,
+body.iisc-apply .frappe-control textarea::placeholder {
+	color: #6f8698;
 }
 
-body[data-path^="job_application"] .btn-default {
+body.iisc-apply .form-control:focus,
+body.iisc-apply .frappe-control input:focus,
+body.iisc-apply .frappe-control textarea:focus {
+	border-color: #108896 !important;
+	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.3) !important;
+}
+
+body.iisc-apply .like-disabled-input,
+body.iisc-apply .control-value {
 	border-radius: 10px;
-	background: var(--iisc-tint);
-	color: var(--iisc-navy);
+	background: var(--ap-input) !important;
+	color: var(--ap-text) !important;
 }
 
-body[data-path^="job_application"] .success-page {
-	padding: 40px 24px;
+/* attach + other small buttons */
+body.iisc-apply .frappe-control .btn-default,
+body.iisc-apply .frappe-control .btn-secondary {
+	border: 1px solid rgba(255, 255, 255, 0.16) !important;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.06) !important;
+	color: #ffffff !important;
+	font-weight: 600;
+}
+
+body.iisc-apply .frappe-control .btn-default:hover {
+	background: rgba(16, 136, 150, 0.3) !important;
+}
+
+/* autocomplete popups: IISc menu style (teal panel, white items, navy hover) */
+body.iisc-apply .awesomplete > ul {
+	padding: 6px;
+	border: 0;
+	border-radius: 12px;
+	background: #108896 !important;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+body.iisc-apply .awesomplete > ul > li {
+	border-radius: 8px;
+	color: #ffffff !important;
+}
+
+body.iisc-apply .awesomplete > ul > li:hover,
+body.iisc-apply .awesomplete > ul > li[aria-selected="true"] {
+	background: #1b374c !important;
+	color: #ffffff !important;
+}
+
+body.iisc-apply .awesomplete > ul > li * {
+	color: inherit !important;
+}
+
+/* footer buttons */
+body.iisc-apply .web-form-footer {
+	margin: 10px 44px 0;
+	padding: 22px 0 34px;
+	border-top: 1px solid var(--ap-line);
+	background: transparent !important;
+}
+
+body.iisc-apply .web-form-footer .btn {
+	min-height: 44px;
+	padding: 0 26px;
+	border-radius: 11px;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+body.iisc-apply .web-form-footer .discard-btn {
+	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	background: transparent !important;
+	color: #dbe5ec !important;
+}
+
+body.iisc-apply .web-form-footer .discard-btn:hover {
+	background: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.iisc-apply .web-form-footer .submit-btn {
+	border: 0 !important;
+	background: #ee5030 !important;
+	color: #ffffff !important;
+	box-shadow: 0 6px 18px rgba(238, 80, 48, 0.35);
+}
+
+body.iisc-apply .web-form-footer .submit-btn:hover {
+	background: #d8431f !important;
+}
+
+/* error / validation message */
+body.iisc-apply .form-message-container .alert,
+body.iisc-apply .form-message {
+	border-radius: 10px;
+}
+
+/* "Submitted" screen */
+body.iisc-apply .success-page {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 48px 32px;
+	border: 1px solid var(--ap-line);
+	border-radius: 20px;
+	background: var(--ap-panel);
 	text-align: center;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-body[data-path^="job_application"] .success-page .success-title {
+body.iisc-apply .success-page .success-title {
 	font-family: "Playfair Display", Georgia, serif;
-	color: var(--iisc-navy);
+	color: #ffffff;
+}
+
+body.iisc-apply .success-page .success-message,
+body.iisc-apply .success-page .success_url_message {
+	color: var(--ap-muted);
+}
+
+body.iisc-apply .success-page a {
+	color: var(--ap-teal-text);
+	font-weight: 700;
+}
+
+/* website footer on the dark page */
+body.iisc-apply .web-footer {
+	border-top: 1px solid var(--ap-line);
+}
+
+@media (max-width: 991.98px) {
+	body.iisc-apply .web-form-container {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	body.iisc-apply .web-form-container > :not(.iisc-apply-nav) {
+		grid-column: 1;
+	}
+
+	body.iisc-apply .web-form-container {
+		background: var(--ap-panel);
+	}
+
+	.iisc-apply-nav {
+		grid-row: auto;
+		position: static;
+		background: var(--ap-side);
+		display: flex;
+		gap: 4px;
+		padding: 8px;
+		overflow-x: auto;
+		border-right: 0;
+		border-bottom: 1px solid var(--ap-line);
+	}
+
+	.iisc-apply-nav-title,
+	.iisc-apply-nav-note {
+		display: none;
+	}
+
+	.iisc-apply-nav a {
+		border-left: 0;
+		border-radius: 10px;
+		padding: 9px 14px;
+		white-space: nowrap;
+	}
+
+	body.iisc-apply .web-form-header {
+		padding: 24px 20px 0;
+	}
+
+	body.iisc-apply .web-form-body {
+		padding: 0 20px 8px;
+	}
+
+	body.iisc-apply .web-form-footer {
+		margin: 10px 20px 0;
+	}
 }
 
 @media (max-width: 767.98px) {
