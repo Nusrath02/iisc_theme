@@ -523,13 +523,34 @@ body.iisc-apply #not-saved-badge {
 	display: none !important;
 }
 
+body.iisc-apply {
+	overflow-x: hidden;
+}
+
+/* signed-in users get Frappe's "My Account" sidebar here — applicants don't need it */
+body.iisc-apply .sidebar-column {
+	display: none !important;
+}
+
+body.iisc-apply .main-column {
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+
 body.iisc-apply .page-content-wrapper main.container {
 	max-width: 1180px;
 	padding-bottom: 56px;
 }
 
+body.iisc-apply .page_content {
+	max-width: none !important;
+}
+
 /* hero */
 .iisc-apply-hero {
+	/* full-bleed, whatever container Frappe wraps the page in */
+	width: 100vw;
+	margin-left: calc(50% - 50vw);
 	padding: 56px 0 74px;
 	text-align: center;
 	background:
