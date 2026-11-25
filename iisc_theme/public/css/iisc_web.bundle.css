@@ -508,18 +508,18 @@ body.iisc-careers[data-path="jobs"] .page-header-wrapper {
 }
 
 /* ---------- application form (/job_application) ----------
-   Dark layout modelled on the IISc programme sites (btech-ug.iisc.ac.in):
+   Light layout matching the job detail page, structured like the IISc programme sites:
    hero → pill tabs → one panel with a section nav on the left and the form on the right.
    Colours are the IISc navy / teal / orange only. */
 body.iisc-apply {
-	--ap-bg: #0f2231;
-	--ap-panel: #163045;
-	--ap-side: #122a3c;
-	--ap-input: #0f2231;
-	--ap-line: rgba(255, 255, 255, 0.09);
-	--ap-text: #eef3f7;
-	--ap-muted: #a7bccb;
-	--ap-teal-text: #5cc7d1;
+	--ap-bg: #f4f6f8;
+	--ap-panel: #ffffff;
+	--ap-side: #f7fafb;
+	--ap-input: #f4f6f8;
+	--ap-line: #e2e8ed;
+	--ap-text: #1b374c;
+	--ap-muted: #5d7385;
+	--ap-teal-text: #108896;
 	background: var(--ap-bg) !important;
 	color: var(--ap-text);
 }
@@ -557,12 +557,12 @@ body.iisc-apply .page_content {
 
 /* hero */
 .iisc-apply-hero {
-	padding: 56px 0 74px;
+	padding: 52px 0 64px;
 	text-align: center;
 	background:
-		radial-gradient(circle at 15% 20%, rgba(16, 136, 150, 0.35), transparent 45%),
-		radial-gradient(circle at 85% 80%, rgba(238, 80, 48, 0.12), transparent 40%),
-		linear-gradient(180deg, #1b374c 0%, #0f2231 100%);
+		radial-gradient(circle at 12% 0%, rgba(16, 136, 150, 0.08), transparent 45%),
+		radial-gradient(circle at 85% 80%, rgba(238, 80, 48, 0.05), transparent 40%),
+		#f4f6f8;
 	border-bottom: 1px solid var(--ap-line);
 }
 
@@ -578,12 +578,12 @@ body.iisc-apply .page_content {
 .iisc-apply-hero h1 {
 	max-width: 900px;
 	margin: 12px auto 0;
-	font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
-	font-size: clamp(28px, 3.4vw, 42px);
-	font-weight: 800;
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: clamp(30px, 3.6vw, 46px);
+	font-weight: 500;
 	line-height: 1.15;
 	letter-spacing: -0.01em;
-	color: #ffffff;
+	color: #1b374c;
 }
 
 .iisc-apply-rule {
@@ -627,8 +627,8 @@ body.iisc-apply .page_content {
 	overflow-x: auto;
 	border: 1px solid var(--ap-line);
 	border-radius: 16px;
-	background: #1b374c;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	background: #ffffff;
+	box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
 	position: relative;
 	z-index: 2;
 }
@@ -640,7 +640,7 @@ body.iisc-apply .page_content {
 	padding: 11px 22px;
 	border: 1px solid transparent;
 	border-radius: 11px;
-	color: #c9d6df;
+	color: #3d5568;
 	font-size: 15px;
 	font-weight: 600;
 	white-space: nowrap;
@@ -649,15 +649,15 @@ body.iisc-apply .page_content {
 }
 
 .iisc-apply-tabs a:hover {
-	background: rgba(255, 255, 255, 0.06);
-	color: #ffffff;
+	background: #eef6f7;
+	color: #1b374c;
 }
 
 .iisc-apply-tabs a.active {
-	border-color: rgba(255, 255, 255, 0.55);
+	border-color: #108896;
 	background: #108896;
 	color: #ffffff;
-	box-shadow: 0 4px 14px rgba(16, 136, 150, 0.45);
+	box-shadow: 0 4px 14px rgba(16, 136, 150, 0.3);
 }
 
 /* one panel: nav on the left, form on the right */
@@ -669,7 +669,7 @@ body.iisc-apply .web-form-container {
 	border-radius: 20px;
 	/* left 250px is the nav column; painted here so the nav itself can stick */
 	background: linear-gradient(90deg, var(--ap-side) 0 250px, var(--ap-line) 250px 251px, var(--ap-panel) 251px);
-	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 20px 50px rgba(16, 24, 40, 0.06);
 }
 
 body.iisc-apply .web-form-container > :not(.iisc-apply-nav) {
@@ -703,7 +703,7 @@ body.iisc-apply .web-form-container > :empty:not(.iisc-apply-nav) {
 	display: block;
 	padding: 13px 22px;
 	border-left: 3px solid transparent;
-	color: #c9d6df;
+	color: #3d5568;
 	font-size: 15.5px;
 	font-weight: 500;
 	text-decoration: none !important;
@@ -711,14 +711,14 @@ body.iisc-apply .web-form-container > :empty:not(.iisc-apply-nav) {
 }
 
 .iisc-apply-nav a:hover {
-	background: rgba(255, 255, 255, 0.04);
-	color: #ffffff;
+	background: #eef6f7;
+	color: #1b374c;
 }
 
 .iisc-apply-nav a.active {
 	border-left-color: #108896;
-	background: rgba(16, 136, 150, 0.16);
-	color: #ffffff;
+	background: #e7f3f5;
+	color: #108896;
 	font-weight: 700;
 }
 
@@ -818,7 +818,7 @@ body.iisc-apply .form-section .section-head {
 /* fields */
 body.iisc-apply .control-label,
 body.iisc-apply .frappe-control label {
-	color: #dbe5ec !important;
+	color: #1b374c !important;
 	font-size: 14px;
 	font-weight: 600;
 }
@@ -837,7 +837,7 @@ body.iisc-apply .frappe-control input,
 body.iisc-apply .frappe-control textarea,
 body.iisc-apply .frappe-control select {
 	min-height: 44px;
-	border: 1px solid rgba(255, 255, 255, 0.12) !important;
+	border: 1px solid transparent !important;
 	border-radius: 10px;
 	background: var(--ap-input) !important;
 	color: var(--ap-text) !important;
@@ -848,14 +848,14 @@ body.iisc-apply .frappe-control select {
 body.iisc-apply .form-control::placeholder,
 body.iisc-apply .frappe-control input::placeholder,
 body.iisc-apply .frappe-control textarea::placeholder {
-	color: #6f8698;
+	color: #94a3b0;
 }
 
 body.iisc-apply .form-control:focus,
 body.iisc-apply .frappe-control input:focus,
 body.iisc-apply .frappe-control textarea:focus {
 	border-color: #108896 !important;
-	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.3) !important;
+	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.15) !important;
 }
 
 body.iisc-apply .like-disabled-input,
@@ -868,15 +868,15 @@ body.iisc-apply .control-value {
 /* attach + other small buttons */
 body.iisc-apply .frappe-control .btn-default,
 body.iisc-apply .frappe-control .btn-secondary {
-	border: 1px solid rgba(255, 255, 255, 0.16) !important;
+	border: 1px solid #d5e2e7 !important;
 	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.06) !important;
-	color: #ffffff !important;
+	background: #e7f3f5 !important;
+	color: #1b374c !important;
 	font-weight: 600;
 }
 
 body.iisc-apply .frappe-control .btn-default:hover {
-	background: rgba(16, 136, 150, 0.3) !important;
+	background: #d3eaee !important;
 }
 
 /* autocomplete popups: IISc menu style (teal panel, white items, navy hover) */
@@ -885,7 +885,7 @@ body.iisc-apply .awesomplete > ul {
 	border: 0;
 	border-radius: 12px;
 	background: #108896 !important;
-	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+	box-shadow: 0 12px 28px rgba(16, 24, 40, 0.18);
 }
 
 body.iisc-apply .awesomplete > ul > li {
@@ -920,20 +920,20 @@ body.iisc-apply .web-form-footer .btn {
 }
 
 body.iisc-apply .web-form-footer .discard-btn {
-	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	border: 1px solid #d5dde3 !important;
 	background: transparent !important;
-	color: #dbe5ec !important;
+	color: #1b374c !important;
 }
 
 body.iisc-apply .web-form-footer .discard-btn:hover {
-	background: rgba(255, 255, 255, 0.06) !important;
+	background: #f4f6f8 !important;
 }
 
 body.iisc-apply .web-form-footer .submit-btn {
 	border: 0 !important;
 	background: #ee5030 !important;
 	color: #ffffff !important;
-	box-shadow: 0 6px 18px rgba(238, 80, 48, 0.35);
+	box-shadow: 0 6px 18px rgba(238, 80, 48, 0.25);
 }
 
 body.iisc-apply .web-form-footer .submit-btn:hover {
@@ -949,7 +949,7 @@ body.iisc-apply .form-message {
 /* pop-ups (missing values, upload, messages): same dark panel as the form */
 body.iisc-apply .modal-backdrop.show {
 	opacity: 0.7;
-	background: #07131c;
+	background: #0f2231;
 }
 
 body.iisc-apply .modal-content {
@@ -958,7 +958,7 @@ body.iisc-apply .modal-content {
 	border-radius: 18px !important;
 	background: var(--ap-panel) !important;
 	color: var(--ap-text) !important;
-	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5) !important;
+	box-shadow: 0 24px 60px rgba(16, 24, 40, 0.25) !important;
 }
 
 body.iisc-apply .modal-header,
@@ -980,9 +980,9 @@ body.iisc-apply .modal-title {
 
 body.iisc-apply .modal-header .close,
 body.iisc-apply .modal-header .btn-modal-close {
-	color: #ffffff !important;
+	color: #5d7385 !important;
 	opacity: 0.7;
-	--icon-stroke: #ffffff;
+	--icon-stroke: #5d7385;
 }
 
 body.iisc-apply .modal-header .close:hover {
@@ -991,8 +991,8 @@ body.iisc-apply .modal-header .close:hover {
 
 body.iisc-apply .modal-header .close svg,
 body.iisc-apply .modal-header .close use {
-	stroke: #ffffff;
-	fill: #ffffff;
+	stroke: #5d7385;
+	fill: #5d7385;
 }
 
 body.iisc-apply .modal-body,
@@ -1018,7 +1018,7 @@ body.iisc-apply .modal-body a {
 
 /* upload dialog */
 body.iisc-apply .file-upload-area {
-	border: 1.5px dashed rgba(92, 199, 209, 0.45) !important;
+	border: 1.5px dashed #b9dde2 !important;
 	border-radius: 14px !important;
 	background: var(--ap-input) !important;
 	color: var(--ap-muted) !important;
@@ -1032,15 +1032,15 @@ body.iisc-apply .file-upload-area .text-muted {
 
 body.iisc-apply .btn-file-upload,
 body.iisc-apply .btn-file-upload .mt-1 {
-	color: #dbe5ec !important;
+	color: #1b374c !important;
 	font-weight: 600;
 }
 
 body.iisc-apply .btn-file-upload svg {
 	border-radius: 50%;
-	background: rgba(16, 136, 150, 0.25) !important;
-	--icon-stroke: #5cc7d1;
-	stroke: #5cc7d1;
+	background: #e7f3f5 !important;
+	--icon-stroke: #108896;
+	stroke: #108896;
 }
 
 body.iisc-apply .btn-file-upload:hover svg {
@@ -1059,7 +1059,7 @@ body.iisc-apply .file-preview-container .file-preview {
 body.iisc-apply .modal .form-control,
 body.iisc-apply .modal input,
 body.iisc-apply .modal textarea {
-	border: 1px solid rgba(255, 255, 255, 0.12) !important;
+	border: 1px solid transparent !important;
 	border-radius: 10px;
 	background: var(--ap-input) !important;
 	color: var(--ap-text) !important;
@@ -1087,14 +1087,14 @@ body.iisc-apply .modal-footer .btn-primary:hover {
 
 body.iisc-apply .modal-footer .btn-secondary {
 	--bt-fill-bg: transparent;
-	--bt-fg: #dbe5ec;
-	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	--bt-fg: #1b374c;
+	border: 1px solid #d5dde3 !important;
 	background: transparent !important;
-	color: #dbe5ec !important;
+	color: #1b374c !important;
 }
 
 body.iisc-apply .modal-footer .btn-secondary:hover {
-	background: rgba(255, 255, 255, 0.06) !important;
+	background: #f4f6f8 !important;
 }
 
 body.iisc-apply .modal-footer .btn-secondary .es-button__label,
@@ -1114,7 +1114,7 @@ body.iisc-apply .success-page:not(.hide) {
 	border-radius: 20px !important;
 	background: var(--ap-panel) !important;
 	text-align: center;
-	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3) !important;
+	box-shadow: 0 20px 50px rgba(16, 24, 40, 0.06) !important;
 }
 
 body.iisc-apply .success-page .success-header {
@@ -1130,11 +1130,11 @@ body.iisc-apply .success-page .success-icon {
 	height: 72px !important;
 	padding: 16px;
 	border-radius: 50%;
-	background: rgba(16, 136, 150, 0.2);
+	background: #e7f3f5;
 	box-shadow: 0 0 0 8px rgba(16, 136, 150, 0.08);
-	--icon-stroke: #5cc7d1;
-	stroke: #5cc7d1;
-	color: #5cc7d1;
+	--icon-stroke: #108896;
+	stroke: #108896;
+	color: #108896;
 }
 
 body.iisc-apply .success-page .success-title {
@@ -1142,7 +1142,7 @@ body.iisc-apply .success-page .success-title {
 	font-family: "Playfair Display", Georgia, serif;
 	font-size: 30px;
 	font-weight: 600;
-	color: #ffffff !important;
+	color: #1b374c !important;
 }
 
 body.iisc-apply .success-page .success-body {
@@ -1176,7 +1176,7 @@ body.iisc-apply .success-page a {
 	font-weight: 700;
 }
 
-/* website footer on the dark page */
+/* website footer */
 body.iisc-apply .web-footer {
 	border-top: 1px solid var(--ap-line);
 }
