@@ -1,10 +1,10 @@
 /* =====================================================================
    IISc website theme — careers page (/jobs and /jobs/<opening>)
-   Scoped to body[data-path^="jobs"], so no other website page changes.
+   Scoped to :is(body[data-path^="jobs"], body[data-path^="job_application"]), so no other website page changes.
    Palette: Navy #1B374C | Teal #108896 | Orange #EE5030
    ===================================================================== */
 
-body[data-path^="jobs"] {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) {
 	--iisc-navy: #1b374c;
 	--iisc-teal: #108896;
 	--iisc-orange: #ee5030;
@@ -18,7 +18,7 @@ body[data-path^="jobs"] {
 }
 
 /* ---------- header ---------- */
-body[data-path^="jobs"] .navbar {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar {
 	background: var(--iisc-navy) !important;
 	border-bottom: 0;
 	box-shadow: none;
@@ -26,7 +26,7 @@ body[data-path^="jobs"] .navbar {
 	padding-bottom: 10px;
 }
 
-body[data-path^="jobs"] .navbar .navbar-brand {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-brand {
 	display: inline-flex;
 	align-items: center;
 	gap: 12px;
@@ -80,23 +80,23 @@ body[data-path^="jobs"] .navbar .navbar-brand {
 	text-transform: uppercase;
 }
 
-body[data-path^="jobs"] .navbar .nav-link,
-body[data-path^="jobs"] .navbar .navbar-toggler {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .nav-link,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .navbar-toggler {
 	color: #ffffff;
 	--icon-stroke: #ffffff;
 }
 
 /* account menu in IISc teal, like every other menu */
-body[data-path^="jobs"] .navbar .dropdown-menu {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .dropdown-menu {
 	background: var(--iisc-teal);
 	border-color: var(--iisc-teal);
 }
 
-body[data-path^="jobs"] .navbar .dropdown-item {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .dropdown-item {
 	color: #ffffff;
 }
 
-body[data-path^="jobs"] .navbar .dropdown-item:hover {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .navbar .dropdown-item:hover {
 	background: var(--iisc-navy);
 	color: #ffffff;
 }
@@ -174,13 +174,13 @@ body.iisc-careers[data-path="jobs"] .page-header-wrapper {
 	display: none;
 }
 
-body[data-path^="jobs"] main.container {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) main.container {
 	padding-top: 28px;
 	padding-bottom: 40px;
 }
 
 /* ---------- filters ---------- */
-body[data-path^="jobs"] .page_content .col-3.text-15 {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .col-3.text-15 {
 	align-self: flex-start;
 	padding: 20px;
 	border: 1px solid var(--iisc-border);
@@ -188,18 +188,18 @@ body[data-path^="jobs"] .page_content .col-3.text-15 {
 	background: #ffffff;
 }
 
-body[data-path^="jobs"] .page_content .col-3.text-15 .text-18 {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .col-3.text-15 .text-18 {
 	font-size: 17px;
 	color: var(--iisc-navy);
 }
 
-body[data-path^="jobs"] [name="clear-filters"] {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) [name="clear-filters"] {
 	color: var(--iisc-teal);
 	font-size: 13px;
 	font-weight: 700;
 }
 
-body[data-path^="jobs"] .page_content .col-3.text-15 hr {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .col-3.text-15 hr {
 	margin: 14px 0 6px;
 	border-color: var(--iisc-border);
 }
@@ -231,13 +231,13 @@ body[data-path^="jobs"] .page_content .col-3.text-15 hr {
 	cursor: pointer;
 }
 
-body[data-path^="jobs"] .form-check-input:checked {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .form-check-input:checked {
 	background-color: var(--iisc-teal);
 	border-color: var(--iisc-teal);
 }
 
 /* ---------- search + sort ---------- */
-body[data-path^="jobs"] #search-box {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) #search-box {
 	height: 44px !important;
 	border-radius: 12px;
 	border-color: var(--iisc-border) !important;
@@ -245,29 +245,29 @@ body[data-path^="jobs"] #search-box {
 	font-size: 15px;
 }
 
-body[data-path^="jobs"] #search-box:focus {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) #search-box:focus {
 	border-color: var(--iisc-teal) !important;
 	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.15);
 }
 
-body[data-path^="jobs"] .btn-group.border {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .btn-group.border {
 	border-radius: 12px !important;
 	overflow: hidden;
 }
 
-body[data-path^="jobs"] .btn-group .btn,
-body[data-path^="jobs"] .btn-group > div {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .btn-group .btn,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .btn-group > div {
 	color: var(--iisc-navy);
 	--icon-stroke: var(--iisc-navy);
 }
 
-body[data-path^="jobs"] .page_content p.text-secondary {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content p.text-secondary {
 	color: var(--iisc-muted) !important;
 	font-weight: 600;
 }
 
 /* ---------- job cards (real HRMS cards and samples) ---------- */
-body[data-path^="jobs"] .page_content .card {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .card {
 	border: 1px solid var(--iisc-border) !important;
 	border-radius: 16px;
 	background: #ffffff;
@@ -276,43 +276,43 @@ body[data-path^="jobs"] .page_content .card {
 	transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
-body[data-path^="jobs"] .page_content .card:hover {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .card:hover {
 	border-color: rgba(16, 136, 150, 0.55) !important;
 	box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
 	transform: translateY(-2px);
 }
 
-body[data-path^="jobs"] .page_content .card h4.jobs-page {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .page_content .card h4.jobs-page {
 	color: var(--iisc-navy);
 	font-size: 17px;
 	font-weight: 700;
 }
 
-body[data-path^="jobs"] .full-time-badge,
-body[data-path^="jobs"] .part-time-badge,
-body[data-path^="jobs"] .other-badge {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .full-time-badge,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .part-time-badge,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .other-badge {
 	padding: 4px 10px;
 	border-radius: 999px;
 	font-size: 11px;
 	font-weight: 700;
 }
 
-body[data-path^="jobs"] .full-time-badge {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .full-time-badge {
 	background: rgba(16, 136, 150, 0.12);
 	color: #0c6d78;
 }
 
-body[data-path^="jobs"] .part-time-badge {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .part-time-badge {
 	background: rgba(238, 80, 48, 0.12);
 	color: #c8401f;
 }
 
-body[data-path^="jobs"] .other-badge {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .other-badge {
 	background: rgba(27, 55, 76, 0.1);
 	color: var(--iisc-navy);
 }
 
-body[data-path^="jobs"] .job-card-footer {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .job-card-footer {
 	border-top: 1px solid #eef0f3;
 	background: #fafbfc;
 	color: var(--iisc-muted);
@@ -405,7 +405,7 @@ body[data-path^="jobs"] .job-card-footer {
 }
 
 /* ---------- footer ---------- */
-body[data-path^="jobs"] .web-footer {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer {
 	margin-top: 0;
 	padding: 18px 0;
 	background: var(--iisc-navy);
@@ -413,21 +413,200 @@ body[data-path^="jobs"] .web-footer {
 	color: rgba(255, 255, 255, 0.85);
 }
 
-body[data-path^="jobs"] .web-footer .footer-logo-extension,
-body[data-path^="jobs"] .web-footer .footer-links {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer .footer-logo-extension,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer .footer-links {
 	display: none;
 }
 
-body[data-path^="jobs"] .web-footer .footer-info {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer .footer-info {
 	margin: 0;
 	padding: 0;
 	border: 0;
 }
 
-body[data-path^="jobs"] .web-footer .footer-powered,
-body[data-path^="jobs"] .web-footer .footer-powered a {
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer .footer-powered,
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .web-footer .footer-powered a {
 	color: rgba(255, 255, 255, 0.85) !important;
 	font-size: 13px;
+}
+
+/* ---------- real job cards: wrap long titles, IISc chips ---------- */
+:is(body[data-path^="jobs"]) .page_content .card h4.jobs-page.text-truncate {
+	white-space: normal;
+	line-height: 1.3;
+}
+
+:is(body[data-path^="jobs"]) .page_content .card .p-6 {
+	padding: 20px !important;
+}
+
+:is(body[data-path^="jobs"]) .page_content .card .icon {
+	--icon-stroke: var(--iisc-teal) !important;
+	color: var(--iisc-teal);
+}
+
+:is(body[data-path^="jobs"]) .page_content .card .icon g {
+	stroke: var(--iisc-teal);
+}
+
+/* ---------- job detail page ---------- */
+:is(body[data-path^="jobs/"]) .page_content .py-12 h1 {
+	font-family: "Playfair Display", Georgia, serif;
+	font-weight: 500;
+	color: var(--iisc-navy);
+}
+
+:is(body[data-path^="jobs/"]) .page_content .py-12 .rounded-circle {
+	background: var(--iisc-tint) !important;
+	color: var(--iisc-teal);
+	--icon-stroke: var(--iisc-teal);
+}
+
+:is(body[data-path^="jobs/"]) .page_content .py-12 .rounded-circle svg,
+:is(body[data-path^="jobs/"]) .page_content .py-12 .rounded-circle g {
+	stroke: var(--iisc-teal);
+	--icon-stroke: var(--iisc-teal);
+}
+
+:is(body[data-path^="jobs/"]) .page_content .py-12 h4,
+:is(body[data-path^="jobs/"]) .page_content .py-12 h3 {
+	margin-top: 24px;
+	color: var(--iisc-navy);
+	font-weight: 700;
+}
+
+:is(body[data-path^="jobs/"]) .page_content .py-12 li::marker {
+	color: var(--iisc-teal);
+}
+
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .btn-primary {
+	border-color: var(--iisc-teal);
+	background: var(--iisc-teal);
+	color: #ffffff;
+	border-radius: 10px;
+	font-weight: 700;
+}
+
+:is(body[data-path^="jobs"], body[data-path^="job_application"]) .btn-primary:hover {
+	border-color: var(--iisc-navy);
+	background: var(--iisc-navy);
+}
+
+:is(body[data-path^="jobs/"]) .breadcrumb a {
+	color: var(--iisc-teal);
+	font-weight: 600;
+}
+
+/* ---------- application form (/job_application) ---------- */
+body[data-path^="job_application"] .page-breadcrumbs {
+	display: none;
+}
+
+body[data-path^="job_application"] main.container {
+	max-width: 860px;
+}
+
+.iisc-apply-card {
+	margin-bottom: 18px;
+	padding: 22px 24px;
+	border-radius: 16px;
+	background:
+		radial-gradient(circle at 90% 10%, rgba(16, 136, 150, 0.45), transparent 50%),
+		var(--iisc-navy);
+	color: #ffffff;
+}
+
+.iisc-apply-card h2 {
+	margin: 12px 0 10px;
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: 26px;
+	font-weight: 500;
+	color: #ffffff;
+}
+
+.iisc-apply-meta {
+	flex-direction: row !important;
+	flex-wrap: wrap;
+	gap: 8px 20px !important;
+	color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.iisc-apply-meta svg {
+	color: #7cc4cc !important;
+}
+
+.iisc-apply-back {
+	display: inline-block;
+	margin-top: 14px;
+	color: #ffffff;
+	font-size: 13px;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+body[data-path^="job_application"] .web-form-header,
+body[data-path^="job_application"] form.web-form,
+body[data-path^="job_application"] .success-page {
+	border: 1px solid var(--iisc-border);
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+body[data-path^="job_application"] .web-form-header {
+	margin-bottom: -1px;
+	padding: 20px 24px 6px;
+	border-bottom: 0;
+	border-radius: 16px 16px 0 0;
+}
+
+body[data-path^="job_application"] form.web-form {
+	border-top: 0;
+	border-radius: 0 0 16px 16px;
+}
+
+body[data-path^="job_application"] .web-form-title {
+	font-family: "Playfair Display", Georgia, serif;
+	font-weight: 500;
+	color: #ee5030;
+}
+
+/* the opening is already shown in the card above */
+body.iisc-apply .frappe-control[data-fieldname="job_title"] {
+	display: none;
+}
+
+body[data-path^="job_application"] .control-label {
+	color: var(--iisc-navy);
+	font-weight: 600;
+}
+
+body[data-path^="job_application"] .form-control {
+	border: 1px solid transparent;
+	border-radius: 10px;
+	background: #f4f6f8;
+}
+
+body[data-path^="job_application"] .form-control:focus {
+	border-color: var(--iisc-teal);
+	background: #ffffff;
+	box-shadow: 0 0 0 3px rgba(16, 136, 150, 0.15);
+}
+
+body[data-path^="job_application"] .btn-default {
+	border-radius: 10px;
+	background: var(--iisc-tint);
+	color: var(--iisc-navy);
+}
+
+body[data-path^="job_application"] .success-page {
+	padding: 40px 24px;
+	text-align: center;
+}
+
+body[data-path^="job_application"] .success-page .success-title {
+	font-family: "Playfair Display", Georgia, serif;
+	color: var(--iisc-navy);
 }
 
 @media (max-width: 767.98px) {

@@ -7,7 +7,8 @@
 
 function iiscCareers() {
 	const path = (document.body.dataset.path || "").replace(/^\/+/, "");
-	if (!/^jobs(\/|$)/.test(path)) return;
+	const isApply = /^job_application(\/|$)/.test(path);
+	if (!/^jobs(\/|$)/.test(path) && !isApply) return;
 
 	const esc = (v) =>
 		String(v === null || v === undefined ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -66,6 +67,64 @@ function iiscCareers() {
 	// ---------- footer ----------
 	const powered = document.querySelector(".web-footer .footer-powered");
 	if (powered) powered.innerHTML = `<span>© ${new Date().getFullYear()} ${t("Indian Institute of Science, Bengaluru")} | ${t("Design")}: ITChamps</span>`;
+
+	// Display clean-up: full institute name instead of the company code, and
+	// department names without the company abbreviation ("Physics - I").
+	const COMPANY = { IISC: t("Indian Institute of Science") };
+	const tidy = () => {
+		document.querySelectorAll(".page_content .card .font-weight-bold, .page_content .py-12 .font-weight-bold").forEach((el) => {
+			const txt = el.textContent.trim();
+			if (COMPANY[txt]) el.textContent = COMPANY[txt];
+		});
+		const walker = document.createTreeWalker(document.querySelector(".page_content") || document.body, NodeFilter.SHOW_TEXT);
+		let node;
+		while ((node = walker.nextNode())) {
+			if (/ - I\s*$/.test(node.nodeValue)) node.nodeValue = node.nodeValue.replace(/ - I(\s*)$/, "$1");
+		}
+		// a single-company site doesn't need a Company filter
+		document.querySelectorAll('.page_content input[name="company"]').forEach((i) => {
+			const group = i.closest(".mb-6");
+			if (group && group.querySelectorAll('input[name="company"]').length < 2) group.style.display = "none";
+		});
+	};
+	tidy();
+
+	if (isApply) {
+		document.body.classList.add("iisc-apply");
+		const params = new URLSearchParams(location.search);
+		const opening = params.get("job_title");
+		const container = document.querySelector(".web-form-container");
+		if (opening && container && window.frappe && frappe.call) {
+			Promise.resolve(frappe.call({ method: "iisc_theme.web.job_opening_summary", args: { name: opening }, type: "GET" }))
+				.then((r) => {
+					const j = r && r.message;
+					if (!j || document.querySelector(".iisc-apply-card")) return;
+					container.insertAdjacentHTML(
+						"afterbegin",
+						`<div class="iisc-apply-card">
+							<span class="iisc-careers-tag">${t("You are applying for")}</span>
+							<h2>${esc(j.title)}</h2>
+							<div class="iisc-job-meta iisc-apply-meta">
+								${j.department ? `<span>${svg("branch")}${esc(j.department)}</span>` : ""}
+								${j.location ? `<span>${svg("pin")}${esc(j.location)}</span>` : ""}
+								${j.closes_on ? `<span>${svg("clock")}${t("Closes on")} ${esc(new Date(j.closes_on).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }))}</span>` : ""}
+							</div>
+							${j.route ? `<a class="iisc-apply-back" href="/${esc(j.route)}">← ${t("View job details")}</a>` : ""}
+						</div>`
+					);
+				})
+				.catch(() => {});
+		}
+		// Friendlier IISc wording on the "Submitted" screen
+		const success = document.querySelector(".success-page");
+		if (success) {
+			const msg = success.querySelector(".success-message");
+			if (msg) msg.textContent = t("Thank you for applying to the Indian Institute of Science. Our recruitment team will review your application and contact you by email.");
+			const title = success.querySelector(".success-title");
+			if (title) title.textContent = t("Application submitted");
+		}
+		return;
+	}
 
 	if (!isList) return;
 

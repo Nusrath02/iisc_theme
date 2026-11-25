@@ -21,3 +21,29 @@ def careers_context():
 		"departments": len({o.department for o in openings if o.department}),
 		"vacancies": sum(int(o.planned_vacancies or 0) for o in openings),
 	}
+
+
+@frappe.whitelist(allow_guest=True)
+def job_opening_summary(name):
+	"""Public details of a published, open Job Opening (shown above the
+	application form)."""
+	row = frappe.db.get_value(
+		"Job Opening",
+		{"name": name, "publish": 1, "status": "Open"},
+		["name", "job_title", "department", "location", "employment_type", "closes_on", "route"],
+		as_dict=True,
+	)
+	if not row:
+		return None
+	dept = row.department or ""
+	if " - " in dept:
+		dept = dept.rsplit(" - ", 1)[0]
+	return {
+		"name": row.name,
+		"title": row.job_title,
+		"department": dept,
+		"location": row.location,
+		"employment_type": row.employment_type,
+		"closes_on": str(row.closes_on) if row.closes_on else None,
+		"route": row.route,
+	}
