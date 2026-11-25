@@ -306,6 +306,11 @@ const iiscHome = {
 					<div class="iisc-hero-actions">${this.actions()}</div>
 				</section>
 
+				<div class="iisc-demo" hidden>
+					<span class="iisc-demo-tag">${__("Sample data")}</span>
+					<span>${__("This site has no HR records yet, so the dashboard is showing example figures. It switches to live data automatically once employees are added.")}</span>
+				</div>
+
 				<section class="iisc-kpis"><div class="iisc-muted">${__("Loading…")}</div></section>
 
 				<section class="iisc-row iisc-row-chart">
@@ -628,7 +633,16 @@ const iiscHome = {
 			</button>`;
 	},
 
+	isDemo() {
+		return !!(this.data && this.data.demo);
+	},
+
+	demoNotice() {
+		frappe.show_alert({ message: __("This is sample data — there is no real record behind it yet."), indicator: "blue" });
+	},
+
 	act(btn) {
+		if (this.isDemo()) return this.demoNotice();
 		const { act, dt, dn } = btn.dataset;
 		const verb = act === "Approve" ? __("approve") : __("reject");
 		frappe.confirm(__("Do you want to {0} {1} {2}?", [verb, __(dt), dn]), () => {
@@ -719,7 +733,9 @@ const iiscHome = {
 
 	openHolidays() {
 		const h = (this.data && this.data.holidays) || {};
-		h.holiday_list ? frappe.set_route("Form", "Holiday List", h.holiday_list) : frappe.set_route("List", "Holiday List");
+		h.holiday_list && !this.isDemo()
+			? frappe.set_route("Form", "Holiday List", h.holiday_list)
+			: frappe.set_route("List", "Holiday List");
 	},
 
 	bind(root) {
@@ -734,7 +750,10 @@ const iiscHome = {
 				const ins = (this.data && this.data.insights) || {};
 				return this.drawChart(root, this.mix, ins[this.mix], "workforce");
 			}
-			if (q("[data-employee]")) return frappe.set_route("Form", "Employee", q("[data-employee]").dataset.employee);
+			if (q("[data-employee]")) {
+				const emp = q("[data-employee]").dataset.employee;
+				return emp ? frappe.set_route("Form", "Employee", emp) : this.demoNotice();
+			}
 			if (q("[data-new]")) return frappe.new_doc(q("[data-new]").dataset.new);
 			if (q("[data-card]")) return this.open(q("[data-card]").dataset.card);
 			if (q("[data-list]")) return frappe.set_route("List", q("[data-list]").dataset.list);
@@ -744,7 +763,10 @@ const iiscHome = {
 			}
 			if (q("[data-toggle-group]")) return q("[data-toggle-group]").parentElement.classList.toggle("open");
 			if (q("[data-holidays]")) return this.openHolidays();
-			if (q("[data-note]")) return frappe.set_route("Form", "Note", q("[data-note]").dataset.note);
+			if (q("[data-note]")) {
+				const note = q("[data-note]").dataset.note;
+				return note ? frappe.set_route("Form", "Note", note) : this.demoNotice();
+			}
 			if (q("[data-new-note]")) return frappe.new_doc("Note", { public: 1 });
 			if (q("[data-search]")) {
 				const b = document.querySelector("#page-desktop .search-widget-button");
@@ -778,6 +800,8 @@ const iiscHome = {
 				const d = r.message;
 				if (!d || !document.body.contains(root)) return;
 				this.data = d;
+				const demo = root.querySelector(".iisc-demo");
+				if (demo) demo.hidden = !d.demo;
 				this.fillKpis(root, d);
 				this.fillCharts(root, d);
 				this.fillOverview(root, d.overview);
