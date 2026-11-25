@@ -1,0 +1,128 @@
+/* =====================================================================
+   IISc module dashboards (Leaves, … — one JS + one Python file each)
+   Mounted inside the module's Workspace page; Frappe's module menu on
+   the left is untouched. Card / KPI / chip / table classes are shared
+   with the home dashboard (iisc_theme.bundle.css §8).
+   ===================================================================== */
+
+/* Hide the raw workspace body (editor blocks, onboarding) while ours is shown */
+.layout-main-section.iisc-mod-on > :not(.iisc-mod) {
+	display: none !important;
+}
+
+/* Frappe caps the workspace column at 900px; give the dashboard the full width */
+body [data-page-route="Workspaces"] .layout-main:has(.layout-main-section.iisc-mod-on) {
+	max-width: none;
+	width: 100%;
+}
+
+.layout-main-section.iisc-mod-on {
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+.iisc-mod {
+	container-type: inline-size;
+	--iisc-page-bg: #f4f6f8;
+	--iisc-card-border: #e6e9ee;
+	--iisc-text: #101828;
+	--iisc-muted: #667085;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 18px 0 32px;
+	color: var(--iisc-text);
+	font-family: var(--font-stack);
+}
+
+.iisc-mod .iisc-hero-title {
+	font-size: 24px;
+}
+
+.iisc-mod-body {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.iisc-kpis.iisc-kpis-4 {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.iisc-mod .iisc-kpi-foot b {
+	color: var(--iisc-navy);
+}
+
+.iisc-mod .iisc-celebrate .iisc-emp-avatar {
+	width: 36px;
+	height: 36px;
+}
+
+/* Quick links (built from the module's own sidebar) */
+.iisc-links-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.iisc-links-label {
+	display: block;
+	margin-bottom: 6px;
+	color: var(--iisc-muted);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.iisc-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.iisc-link-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 32px;
+	padding: 0 12px;
+	border: 1px solid var(--iisc-card-border);
+	border-radius: 9px;
+	background: #ffffff;
+	color: var(--iisc-navy);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.iisc-link-chip:hover {
+	border-color: var(--iisc-teal);
+	background: var(--iisc-teal-tint);
+	color: var(--iisc-teal);
+}
+
+.iisc-mod .iisc-kpi[data-list] {
+	cursor: pointer;
+}
+
+/* Respond to the space the dashboard actually has (module menu open/closed) */
+@container (max-width: 1050px) {
+	.iisc-kpis.iisc-kpis-4 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@container (max-width: 900px) {
+	.iisc-row-chart,
+	.iisc-row-bottom {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+}
+
+@container (max-width: 520px) {
+	.iisc-kpis.iisc-kpis-4 {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

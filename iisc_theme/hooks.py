@@ -11,8 +11,8 @@ required_apps = ["frappe", "hrms"]
 # Desk assets (bundled by esbuild on Frappe Cloud deploy -> hashed
 # file names, so no manual ?v= cache-busting is needed)
 # ------------------------------------------------------------------
-app_include_css = ["iisc_theme.bundle.css"]
-app_include_js = ["iisc_theme.bundle.js"]
+app_include_css = ["iisc_theme.bundle.css", "iisc_modules.bundle.css"]
+app_include_js = ["iisc_theme.bundle.js", "iisc_modules.bundle.js"]
 
 # Website / login page assets
 web_include_css = ["iisc_theme.bundle.css"]
