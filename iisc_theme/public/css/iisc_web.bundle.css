@@ -662,7 +662,8 @@ body.iisc-apply .web-form-container {
 	overflow: hidden;
 	border: 1px solid var(--ap-line);
 	border-radius: 20px;
-	background: var(--ap-panel);
+	/* left 250px is the nav column; painted here so the nav itself can stick */
+	background: linear-gradient(90deg, var(--ap-side) 0 250px, var(--ap-line) 250px 251px, var(--ap-panel) 251px);
 	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
@@ -678,10 +679,10 @@ body.iisc-apply .web-form-container > :empty:not(.iisc-apply-nav) {
 .iisc-apply-nav {
 	grid-column: 1;
 	grid-row: 1 / span 8;
-	align-self: stretch;
+	align-self: start;
+	position: sticky;
+	top: 96px;
 	padding: 18px 0;
-	border-right: 1px solid var(--ap-line);
-	background: var(--ap-side);
 }
 
 .iisc-apply-nav-title {
@@ -737,7 +738,16 @@ body.iisc-apply form.web-form {
 }
 
 body.iisc-apply .web-form-header {
-	padding: 34px 44px 0;
+	padding: 34px 44px 0 !important;
+}
+
+body.iisc-apply form.web-form {
+	padding: 0 !important;
+}
+
+/* hero sits right under the header */
+body.iisc-apply .page-content-wrapper {
+	margin-top: 0 !important;
 }
 
 body.iisc-apply .web-form-header .web-form-head,
@@ -972,8 +982,14 @@ body.iisc-apply .web-footer {
 		grid-column: 1;
 	}
 
+	body.iisc-apply .web-form-container {
+		background: var(--ap-panel);
+	}
+
 	.iisc-apply-nav {
 		grid-row: auto;
+		position: static;
+		background: var(--ap-side);
 		display: flex;
 		gap: 4px;
 		padding: 8px;
