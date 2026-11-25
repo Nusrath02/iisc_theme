@@ -95,10 +95,13 @@ function iiscCareers() {
 		const opening = params.get("job_title");
 		const container = document.querySelector(".web-form-container");
 		const mainEl = document.querySelector(".page-content-wrapper main.container");
+		// put the hero outside Frappe's fixed-width container so it is naturally
+		// full width (no 100vw trick, so no sideways scrollbar)
+		const outer = (mainEl && mainEl.closest("body > .container")) || mainEl;
 
 		// ---- hero + pill tabs (layout of the IISc programme sites) ----
-		if (mainEl && !document.querySelector(".iisc-apply-hero")) {
-			mainEl.insertAdjacentHTML(
+		if (outer && !document.querySelector(".iisc-apply-hero")) {
+			outer.insertAdjacentHTML(
 				"beforebegin",
 				`<section class="iisc-apply-hero">
 					<div class="container">
