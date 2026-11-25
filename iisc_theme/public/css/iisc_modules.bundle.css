@@ -126,3 +126,13 @@ body [data-page-route="Workspaces"] .layout-main:has(.layout-main-section.iisc-m
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+/* Dashboard pages (/desk/…/dashboard-view/X): analytics only */
+.iisc-mod[data-mode="dashboard"] .iisc-mod-ops {
+	display: none !important;
+}
+
+.page-content.iisc-mod-on {
+	padding-left: 24px;
+	padding-right: 24px;
+}

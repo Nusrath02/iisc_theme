@@ -82,7 +82,7 @@ iiscModules.register({
 				${h.card(__("Who's Away This Week"), __("Approved leave overlapping the next 7 days"), away)}
 			</section>
 
-			<section class="iisc-row iisc-row-bottom">
+			<section class="iisc-row iisc-row-bottom iisc-mod-ops">
 				<div class="iisc-card">
 					<div class="iisc-card-head iisc-pad-x">
 						<div><h3 class="iisc-card-title">${__("Pending Leave Approvals")}</h3>

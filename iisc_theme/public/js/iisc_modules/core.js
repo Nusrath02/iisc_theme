@@ -93,6 +93,43 @@ const iiscModules = {
 		empty(text) {
 			return `<div class="iisc-empty iisc-chart-empty">${svg("grid", 22)}<span>${esc(text)}</span></div>`;
 		},
+		money(v, currency) {
+			if (v === null || v === undefined) return "—";
+			return esc(format_currency(v, currency || frappe.boot.sysdefaults.currency, 0));
+		},
+		// Compact list of people/records: [{title, sub, chip, chipTone, initials, doctype, name}]
+		rows(items, emptyText) {
+			if (!items || !items.length) return `<div class="iisc-empty">${esc(emptyText || __("Nothing to show yet."))}</div>`;
+			return items
+				.map(
+					(r) => `
+				<div class="iisc-celebrate" ${r.doctype ? `data-open="${esc(r.doctype)}" data-name="${esc(r.name || "")}" role="button" tabindex="0"` : ""}>
+					<span class="iisc-emp-avatar">${esc(r.initials || initials(r.title))}</span>
+					<span class="iisc-hol-text"><b>${esc(r.title)}</b><small>${esc(r.sub || "")}</small></span>
+					${r.chip !== undefined && r.chip !== null && r.chip !== "" ? `<span class="iisc-chip ${r.chipTone || "c-gray"}">${esc(r.chip)}</span>` : ""}
+				</div>`
+				)
+				.join("");
+		},
+	},
+
+	// Horizontal bars in HTML (long labels stay readable)
+	hbars(data, money) {
+		const values = data.values || [];
+		const max = Math.max(...values, 1);
+		const total = values.reduce((a, b) => a + Number(b || 0), 0) || 1;
+		return `<div class="iisc-hbars">${(data.labels || [])
+			.map((label, i) => {
+				const v = Number(values[i] || 0);
+				const shown = money ? this.h.money(v, data.currency) : esc(v);
+				return `
+				<div class="iisc-hbar" title="${esc(label)}">
+					<span class="iisc-hbar-label">${esc(label)}</span>
+					<span class="iisc-hbar-track"><span style="width:${Math.max(2, (v / max) * 100)}%"></span></span>
+					<span class="iisc-hbar-value"><b>${shown}</b> <small>${Math.round((v / total) * 100)}%</small></span>
+				</div>`;
+			})
+			.join("")}</div>`;
 	},
 
 	// ---------- chart drawing (frappe-charts, IISc palette) ----------
@@ -107,6 +144,10 @@ const iiscModules = {
 		if (!el) return;
 		if (!this.hasData(data)) {
 			el.innerHTML = this.h.empty(opts.empty || __("No data yet."));
+			return;
+		}
+		if (opts.type === "hbar") {
+			el.innerHTML = this.hbars(data, opts.money);
 			return;
 		}
 		el.innerHTML = "";
@@ -129,7 +170,7 @@ const iiscModules = {
 	},
 
 	// ---------- shared blocks ----------
-	pendingTable(items, total, list) {
+	pendingTable(items, total, list, filters = { status: "Open" }) {
 		if (!items || !items.length) {
 			return `<div class="iisc-empty iisc-pad">${__("You're all caught up — nothing is awaiting approval.")}</div>`;
 		}
@@ -139,7 +180,7 @@ const iiscModules = {
 				<tr>
 					<td><div class="iisc-emp"><span class="iisc-emp-avatar">${esc(initials(it.employee_name))}</span>
 						<span><b>${esc(it.employee_name)}</b><small>${esc(it.department || "")}</small></span></div></td>
-					<td><span class="iisc-chip c-orange">${esc(it.type)}</span></td>
+					<td><span class="iisc-chip ${it.tone || "c-orange"}">${esc(it.type)}</span></td>
 					<td class="iisc-q-details">${esc(it.details)}</td>
 					<td class="iisc-muted">${esc(this.h.when(it.creation))}</td>
 					<td class="iisc-q-actions">
@@ -154,7 +195,7 @@ const iiscModules = {
 				<thead><tr><th>${__("Employee")}</th><th>${__("Type")}</th><th>${__("Details")}</th><th>${__("Submitted")}</th><th class="text-right">${__("Actions")}</th></tr></thead>
 				<tbody>${rows}</tbody>
 			</table></div>
-			<button class="iisc-table-foot" data-list="${esc(list)}" data-filters='${esc(JSON.stringify({ status: "Open" }))}'>
+			<button class="iisc-table-foot" data-list="${esc(list)}" data-filters='${esc(JSON.stringify(filters))}'>
 				${__("View all {0} pending", [total || items.length])} ${svg("arrow", 14)}
 			</button>`;
 	},
@@ -193,14 +234,29 @@ const iiscModules = {
 	},
 
 	// ---------- mount ----------
-	currentWorkspace() {
+	// Workspace page  (/desk/<module>)            → full module dashboard
+	// Dashboard page  (/desk/…/dashboard-view/X)  → same dashboard, analytics only
+	currentTarget() {
 		const page = frappe.container && frappe.container.page;
-		if (!page || page.id !== "page-Workspaces" || !page.offsetParent) return null;
+		if (!page || !page.offsetParent) return null;
 		const route = frappe.get_route() || [];
-		if (route[0] !== "Workspaces" || !route[1]) return null;
 		const crumb = page.querySelector('.page-head .es-breadcrumbs__item[aria-current="page"] .es-breadcrumbs__label');
-		if (crumb && crumb.textContent.trim() && crumb.textContent.trim() !== __(route[1]) && crumb.textContent.trim() !== route[1]) return null;
-		return route[1];
+		const crumbText = crumb ? crumb.textContent.trim() : "";
+		const sameAsCrumb = (name) => !crumbText || crumbText === name || crumbText === __(name);
+
+		if (page.id === "page-Workspaces" && route[0] === "Workspaces" && route[1]) {
+			const cfg = this.registry[route[1]];
+			if (!cfg || !sameAsCrumb(route[1]) || this.isEditing()) return null;
+			const container = page.querySelector(".layout-main-section");
+			return container ? { cfg, mode: "workspace", key: `ws:${route[1]}`, container } : null;
+		}
+		if (page.id === "page-dashboard-view" && route[0] === "dashboard-view" && route[1]) {
+			const cfg = Object.values(this.registry).find((c) => c.dashboard === route[1]);
+			if (!cfg || !sameAsCrumb(route[1])) return null;
+			const container = page.querySelector(".page-content");
+			return container ? { cfg, mode: "dashboard", key: `db:${route[1]}`, container } : null;
+		}
+		return null;
 	},
 
 	isEditing() {
@@ -213,18 +269,16 @@ const iiscModules = {
 	},
 
 	render() {
-		const ws = this.currentWorkspace();
-		const cfg = ws && this.registry[ws];
-		if (!cfg || this.isEditing()) {
+		const t = this.currentTarget();
+		if (!t) {
 			if (document.querySelector(".iisc-mod")) this.unmountAll();
 			return;
 		}
-		const section = frappe.container.page.querySelector(".layout-main-section");
-		if (!section) return;
-		const existing = section.querySelector(":scope > .iisc-mod");
-		if (existing && existing.dataset.ws === ws) return;
+		const { cfg, mode, key, container } = t;
+		const existing = container.querySelector(":scope > .iisc-mod");
+		if (existing && existing.dataset.key === key) return;
 		this.unmountAll();
-		section.classList.add("iisc-mod-on");
+		container.classList.add("iisc-mod-on");
 		const actions = (cfg.actions || [])
 			.filter((a) => frappe.model.can_create(a.doctype))
 			.map(
@@ -232,16 +286,21 @@ const iiscModules = {
 					${svg(a.icon || "plus", 15)}${esc(a.label)}</button>`
 			)
 			.join("");
-		section.insertAdjacentHTML(
+		const title = mode === "dashboard" ? cfg.dashboardTitle || __("{0} Analytics", [cfg.title || cfg.workspace]) : cfg.title || __(cfg.workspace);
+		const back =
+			mode === "dashboard"
+				? `<button class="iisc-btn iisc-btn-outline" data-home-ws="${esc(cfg.workspace)}">${svg("grid", 15)}${__("Module Home")}</button>`
+				: "";
+		container.insertAdjacentHTML(
 			"afterbegin",
-			`<div class="iisc-mod" data-ws="${esc(ws)}">
+			`<div class="iisc-mod" data-ws="${esc(cfg.workspace)}" data-key="${esc(key)}" data-mode="${mode}">
 				<section class="iisc-card iisc-hero">
 					<div>
-						<h2 class="iisc-hero-title">${esc(cfg.title || __(ws))}</h2>
+						<h2 class="iisc-hero-title">${esc(title)}</h2>
 						<p class="iisc-hero-sub">${esc(cfg.subtitle || "")} • <b>${esc(moment().format("ddd, MMM D, YYYY"))}</b></p>
 					</div>
 					<div class="iisc-hero-actions">
-						${actions}
+						${mode === "dashboard" ? back : actions}
 						<select class="iisc-select" data-months title="${__("Period for monthly charts")}">
 							<option value="6">${__("Last 6 Months")}</option>
 							<option value="12">${__("Last 12 Months")}</option>
@@ -255,7 +314,7 @@ const iiscModules = {
 				<div class="iisc-mod-body"><div class="iisc-muted iisc-pad">${__("Loading…")}</div></div>
 			</div>`
 		);
-		const root = section.querySelector(":scope > .iisc-mod");
+		const root = container.querySelector(":scope > .iisc-mod");
 		root.querySelector("[data-months]").value = String(this.months);
 		this.bind(root, cfg);
 		this.load(root, cfg);
@@ -304,6 +363,8 @@ const iiscModules = {
 			const q = (sel) => ev.target.closest(sel);
 			if (q("[data-act]")) return this.act(root, q("[data-act]"));
 			if (q("[data-new]")) return frappe.new_doc(q("[data-new]").dataset.new);
+			if (q("[data-home-ws]")) return frappe.set_route("Workspaces", q("[data-home-ws]").dataset.homeWs);
+			if (q("[data-route]")) return frappe.set_route(...JSON.parse(q("[data-route]").dataset.route));
 			if (q("[data-open]")) {
 				const o = q("[data-open]");
 				if (!o.dataset.name) return this.demoNotice();

@@ -65,3 +65,54 @@ def use_demo():
 	if setting is not None:
 		return bool(int(setting))
 	return not frappe.db.count("Employee", {"status": "Active"})
+
+
+# ---------------------------------------------------------------------------
+# aggregation helpers (all work on rows already permission-filtered)
+# ---------------------------------------------------------------------------
+def top(pairs, n=7, other=None):
+	"""{label: value} -> {"labels", "values"} sorted desc, rest folded into 'Others'."""
+	from frappe import _
+
+	items = sorted(pairs.items(), key=lambda kv: (-kv[1], str(kv[0])))
+	head, rest = items[:n], sum(v for _k, v in items[n:])
+	if rest:
+		head.append((other or _("Others"), rest))
+	return {"labels": [k for k, _v in head], "values": [round(v, 2) for _k, v in head]}
+
+
+def group_count(rs, key, default=None):
+	from collections import Counter
+
+	return Counter((r.get(key) or default) for r in rs or [])
+
+
+def group_sum(rs, key, value, default=None):
+	from collections import defaultdict
+
+	from frappe.utils import flt
+
+	out = defaultdict(float)
+	for r in rs or []:
+		out[r.get(key) or default] += flt(r.get(value))
+	return out
+
+
+def monthly(rs, starts, date_field, value_field=None):
+	"""Per-month count (or sum of value_field) for the given month starts."""
+	from frappe.utils import flt
+
+	vals = [0] * len(starts)
+	for r in rs or []:
+		i = bucket(starts, r.get(date_field))
+		if i is not None:
+			vals[i] += flt(r.get(value_field)) if value_field else 1
+	return [round(v, 2) for v in vals]
+
+
+def window(starts):
+	return ["between", [starts[0], get_last_day(starts[-1])]]
+
+
+def cyc(values, n):
+	return [values[i % len(values)] for i in range(n)]
