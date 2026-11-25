@@ -341,7 +341,12 @@ const iiscModules = {
 		}
 		const { cfg, mode, key, container } = t;
 		const existing = container.querySelector(":scope > .iisc-mod");
-		if (existing && existing.dataset.key === key) return;
+		if (existing && existing.dataset.key === key) {
+			// Frappe can rewrite the container's classes when it refreshes the
+			// page — keep its standard workspace / dashboard content hidden.
+			container.classList.add("iisc-mod-on");
+			return;
+		}
 		this.unmountAll();
 		container.classList.add("iisc-mod-on");
 		const actions = (cfg.actions || [])
