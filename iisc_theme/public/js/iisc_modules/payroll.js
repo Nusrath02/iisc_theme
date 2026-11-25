@@ -45,7 +45,7 @@ iiscModules.register({
 	charts(root, d, m) {
 		const c = d.charts || {};
 		m.draw(root, "monthly", c.monthly, { type: "bar", colors: ["#1b374c", "#108896"], money: true, empty: __("No submitted salary slips in this period.") });
-		m.draw(root, "components", c.components, { type: "donut", empty: __("No submitted salary slips yet.") });
+		m.draw(root, "components", c.components, { type: "donut", money: true, empty: __("No submitted salary slips yet.") });
 		m.draw(root, "departments", c.departments, { type: "hbar", money: true, empty: __("No submitted salary slips in this period.") });
 		m.draw(root, "deductions", c.deductions, { type: "line", colors: ["#ee5030"], money: true, empty: __("No deductions in this period.") });
 	},

@@ -496,6 +496,10 @@ const iiscHome = {
 				.join("")}</div>`;
 			return;
 		}
+		if ((cfg.type === "donut" || cfg.type === "pie") && window.iiscModules && iiscModules.donut) {
+			el.innerHTML = iiscModules.donut(data, { type: cfg.type, colors: cfg.colors, money: cfg.money });
+			return;
+		}
 		el.innerHTML = "";
 		const datasets = data.datasets || [{ name: __("Staff"), values: data.values }];
 		const opts = {

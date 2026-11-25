@@ -49,7 +49,7 @@ iiscModules.register({
 	charts(root, d, m) {
 		const c = d.charts || {};
 		m.draw(root, "monthly", c.monthly, { type: "bar", colors: ["#1b374c", "#108896"], money: true, empty: __("No claims in this period.") });
-		m.draw(root, "by_type", c.by_type, { type: "donut", empty: __("No claims this year yet.") });
+		m.draw(root, "by_type", c.by_type, { type: "donut", money: true, empty: __("No claims this year yet.") });
 		m.draw(root, "departments", c.departments, { type: "hbar", money: true, empty: __("No claims this year yet.") });
 		m.draw(root, "status", c.status, { type: "pie", colors: ["#108896", "#e0912f", "#ee5030", "#1b374c"], empty: __("No claims this year yet.") });
 	},

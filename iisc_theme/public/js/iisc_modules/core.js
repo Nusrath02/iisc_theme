@@ -113,6 +113,67 @@ const iiscModules = {
 		},
 	},
 
+	// Short Indian-style numbers: 1.2K, 4.9 L, 2.3 Cr
+	shortNum(v) {
+		const n = Number(v) || 0;
+		const a = Math.abs(n);
+		const fix = (x) => x.toFixed(1).replace(/\.0$/, "");
+		if (a >= 1e7) return `${fix(n / 1e7)} Cr`;
+		if (a >= 1e5) return `${fix(n / 1e5)} L`;
+		if (a >= 1e3) return `${fix(n / 1e3)}K`;
+		return String(Math.round(n * 10) / 10);
+	},
+
+	symbol(currency) {
+		const cur = currency || frappe.boot.sysdefaults.currency;
+		return (window.get_currency_symbol && get_currency_symbol(cur)) || "";
+	},
+
+	// Donut / pie drawn as SVG + legend: the total always fits inside the ring
+	donut(data, opts = {}) {
+		const values = (data.values || []).map((v) => Math.max(Number(v) || 0, 0));
+		const labels = data.labels || [];
+		const colors = opts.colors || PALETTE;
+		const total = values.reduce((a, b) => a + b, 0) || 1;
+		const sym = opts.money ? this.symbol(data.currency) : "";
+		const show = (v) => `${sym}${this.shortNum(v)}`;
+		const r = 54;
+		const circ = 2 * Math.PI * r;
+		const width = opts.type === "pie" ? 30 : 20;
+		let offset = 0;
+		const segs = values
+			.map((v, i) => {
+				const len = (v / total) * circ;
+				const seg = `<circle r="${r}" cx="70" cy="70" fill="none" stroke="${colors[i % colors.length]}" stroke-width="${width}"
+					stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-offset}" transform="rotate(-90 70 70)">
+					<title>${esc(labels[i])}: ${esc(opts.money ? format_currency(v, data.currency, 0) : v)}</title></circle>`;
+				offset += len;
+				return seg;
+			})
+			.join("");
+		const legend = labels
+			.map(
+				(l, i) => `
+				<div class="iisc-donut-item" title="${esc(l)}">
+					<i style="background:${colors[i % colors.length]}"></i>
+					<span class="iisc-donut-label">${esc(l)}</span>
+					<b>${esc(show(values[i]))}</b>
+					<small>${Math.round((values[i] / total) * 100)}%</small>
+				</div>`
+			)
+			.join("");
+		return `
+			<div class="iisc-donut">
+				<div class="iisc-donut-ring">
+					<svg viewBox="0 0 140 140" width="150" height="150" aria-hidden="true">
+						<circle r="${r}" cx="70" cy="70" fill="none" stroke="#eef0f3" stroke-width="${width}"></circle>${segs}
+					</svg>
+					<div class="iisc-donut-center"><b>${esc(show(total))}</b><span>${esc(opts.centerLabel || __("Total"))}</span></div>
+				</div>
+				<div class="iisc-donut-legend">${legend}</div>
+			</div>`;
+	},
+
 	// Horizontal bars in HTML (long labels stay readable)
 	hbars(data, money) {
 		const values = data.values || [];
@@ -148,6 +209,10 @@ const iiscModules = {
 		}
 		if (opts.type === "hbar") {
 			el.innerHTML = this.hbars(data, opts.money);
+			return;
+		}
+		if (opts.type === "donut" || opts.type === "pie") {
+			el.innerHTML = this.donut(data, opts);
 			return;
 		}
 		el.innerHTML = "";
