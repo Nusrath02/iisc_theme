@@ -523,8 +523,10 @@ body.iisc-apply #not-saved-badge {
 	display: none !important;
 }
 
+/* clip (not hidden) so the sticky header and section nav keep working */
+html:has(body.iisc-apply),
 body.iisc-apply {
-	overflow-x: hidden;
+	overflow-x: clip;
 }
 
 /* signed-in users get Frappe's "My Account" sidebar here — applicants don't need it */
