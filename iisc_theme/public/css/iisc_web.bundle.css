@@ -33,6 +33,21 @@ body[data-path^="jobs"] .navbar .navbar-brand {
 	color: #ffffff;
 }
 
+.iisc-web-logo-img {
+	height: 46px;
+	width: auto;
+}
+
+.iisc-web-careers {
+	padding: 4px 12px;
+	border-left: 1px solid rgba(255, 255, 255, 0.25);
+	color: rgba(255, 255, 255, 0.85);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
 .iisc-web-logo {
 	display: inline-flex;
 	align-items: center;

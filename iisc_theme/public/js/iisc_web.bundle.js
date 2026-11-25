@@ -38,8 +38,8 @@ function iiscCareers() {
 	const brand = document.querySelector(".navbar .navbar-brand");
 	if (brand) {
 		brand.innerHTML = `
-			<span class="iisc-web-logo">IISc</span>
-			<span class="iisc-web-brand"><b>${t("Indian Institute of Science")}</b><small>${t("Careers")}</small></span>`;
+			<img class="iisc-web-logo-img" src="/assets/iisc_theme/images/iisc-logo.png" alt="${t("Indian Institute of Science")}">
+			<span class="iisc-web-careers">${t("Careers")}</span>`;
 	}
 
 	// ---------- hero (list page only) ----------

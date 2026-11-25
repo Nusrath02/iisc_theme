@@ -20,7 +20,7 @@ web_include_js = ["iisc_web.bundle.js"]
 
 website_context = {
 	"favicon": "/assets/iisc_theme/images/favicon.png",
-	"splash_image": "/assets/iisc_theme/images/iisc-logo.svg",
+	"splash_image": "/assets/iisc_theme/images/iisc-emblem-tile.png",
 }
 
 # Theme-only app: no Apps-screen icon needed.

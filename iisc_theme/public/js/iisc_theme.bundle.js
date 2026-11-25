@@ -28,7 +28,7 @@ const iiscFooter = {
 		this.el.className = "iisc-footer";
 		this.el.innerHTML = `
 			<span>© ${new Date().getFullYear()} Indian Institute of Science, Bengaluru | Design: ITChamps</span>
-			<img src="/assets/iisc_theme/images/iisc-logo.svg" alt="IISc" onerror="this.style.display='none'">
+			<img src="/assets/iisc_theme/images/iisc-logo.png" alt="Indian Institute of Science" onerror="this.style.display='none'">
 		`;
 		document.body.appendChild(this.el);
 		document.body.classList.add("iisc-footer-on");
@@ -211,7 +211,7 @@ const iiscHome = {
 		return `
 			<aside class="iisc-side">
 				<div class="iisc-side-brand">
-					<span class="iisc-side-logo">IISc</span>
+					<span class="iisc-side-logo"><img src="/assets/iisc_theme/images/iisc-emblem.png" alt="IISc"></span>
 					<span class="iisc-side-brand-text">
 						<span class="iisc-side-brand-title">${__("IISc Desk")} ${hrVersion ? `<span class="iisc-side-ver">v${iiscEsc(hrVersion)}</span>` : ""}</span>
 						<span class="iisc-side-brand-sub">${__("Indian Institute of Science")}</span>
