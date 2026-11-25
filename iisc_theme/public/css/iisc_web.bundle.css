@@ -659,7 +659,6 @@ body.iisc-apply .web-form-container {
 	display: grid;
 	grid-template-columns: 250px minmax(0, 1fr);
 	align-items: start;
-	overflow: hidden;
 	border: 1px solid var(--ap-line);
 	border-radius: 20px;
 	/* left 250px is the nav column; painted here so the nav itself can stick */
