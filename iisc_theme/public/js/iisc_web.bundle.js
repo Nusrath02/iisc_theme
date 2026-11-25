@@ -38,7 +38,9 @@ function iiscCareers() {
 	// ---------- header ----------
 	const brand = document.querySelector(".navbar .navbar-brand");
 	if (brand) {
-		brand.innerHTML = `<img class="iisc-web-logo-img" src="/assets/iisc_theme/images/iisc-logo.png" alt="${t("Indian Institute of Science")}">`;
+		// Same lock-up as the IISc programme sites: emblem on a white tile + two-line name
+		brand.innerHTML = `<img class="iisc-web-emblem" src="/assets/iisc_theme/images/iisc-emblem-light.png" alt="">
+			<span class="iisc-web-brand"><b>${t("Indian Institute of Science")}</b><small>${t("Bengaluru")}</small></span>`;
 	}
 
 	// ---------- hero (list page only) ----------
@@ -92,27 +94,111 @@ function iiscCareers() {
 		const params = new URLSearchParams(location.search);
 		const opening = params.get("job_title");
 		const container = document.querySelector(".web-form-container");
-		if (opening && container && window.frappe && frappe.call) {
+		const mainEl = document.querySelector(".page-content-wrapper main.container");
+
+		// ---- hero + pill tabs (layout of the IISc programme sites) ----
+		if (mainEl && !document.querySelector(".iisc-apply-hero")) {
+			mainEl.insertAdjacentHTML(
+				"beforebegin",
+				`<section class="iisc-apply-hero">
+					<div class="container">
+						<span class="iisc-apply-eyebrow">${t("Job application")}</span>
+						<h1 data-apply="title">${t("Apply to IISc")}</h1>
+						<span class="iisc-apply-rule"></span>
+						<div class="iisc-apply-meta" data-apply="meta"></div>
+					</div>
+				</section>
+				<nav class="iisc-apply-tabs">
+					<a href="/jobs" data-apply="details">${svg("branch", 16)}<span>${t("Job details")}</span></a>
+					<a class="active" href="#">${svg("users", 16)}<span>${t("Application")}</span></a>
+					<a href="/jobs">${svg("money", 16)}<span>${t("All openings")}</span></a>
+				</nav>`
+			);
+			document.querySelector('.iisc-apply-tabs a.active').addEventListener("click", (e) => e.preventDefault());
+		}
+
+		if (opening && window.frappe && frappe.call) {
 			Promise.resolve(frappe.call({ method: "iisc_theme.web.job_opening_summary", args: { name: opening }, type: "GET" }))
 				.then((r) => {
 					const j = r && r.message;
-					if (!j || document.querySelector(".iisc-apply-card")) return;
-					container.insertAdjacentHTML(
-						"afterbegin",
-						`<div class="iisc-apply-card">
-							<span class="iisc-careers-tag">${t("You are applying for")}</span>
-							<h2>${esc(j.title)}</h2>
-							<div class="iisc-job-meta iisc-apply-meta">
-								${j.department ? `<span>${svg("branch")}${esc(j.department)}</span>` : ""}
-								${j.location ? `<span>${svg("pin")}${esc(j.location)}</span>` : ""}
-								${j.closes_on ? `<span>${svg("clock")}${t("Closes on")} ${esc(new Date(j.closes_on).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }))}</span>` : ""}
-							</div>
-							${j.route ? `<a class="iisc-apply-back" href="/${esc(j.route)}">← ${t("View job details")}</a>` : ""}
-						</div>`
-					);
+					if (!j) return;
+					const title = document.querySelector('[data-apply="title"]');
+					if (title) title.textContent = j.title;
+					const meta = document.querySelector('[data-apply="meta"]');
+					if (meta)
+						meta.innerHTML = [
+							j.department ? `<span>${svg("branch")}${esc(j.department)}</span>` : "",
+							j.location ? `<span>${svg("pin")}${esc(j.location)}</span>` : "",
+							j.employment_type ? `<span>${svg("users")}${esc(j.employment_type)}</span>` : "",
+							j.closes_on ? `<span>${svg("clock")}${t("Closes on")} ${esc(new Date(j.closes_on).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }))}</span>` : "",
+						].join("");
+					const details = document.querySelector('[data-apply="details"]');
+					if (details && j.route) details.href = "/" + j.route;
 				})
 				.catch(() => {});
 		}
+
+		// ---- side section nav + grouped fields ----
+		const GROUPS = [
+			{ id: "personal", label: t("Personal details"), first: "applicant_name" },
+			{ id: "application", label: t("Application"), first: "source" },
+			{ id: "resume", label: t("Resume"), first: "resume_link" },
+			{ id: "salary", label: t("Expected salary"), first: "currency" },
+		];
+		const buildGroups = () => {
+			if (!container || container.querySelector(".iisc-apply-nav")) return true;
+			if (!container.querySelector('.frappe-control[data-fieldname="applicant_name"]')) return false;
+
+			const groups = GROUPS.filter((g) => container.querySelector(`.frappe-control[data-fieldname="${g.first}"]`));
+			groups.forEach((g, i) => {
+				const ctrl = container.querySelector(`.frappe-control[data-fieldname="${g.first}"]`);
+				const section = ctrl.closest(".form-section");
+				const head = section && section.querySelector(".section-head");
+				const h = document.createElement("h3");
+				h.className = "iisc-form-group";
+				h.id = "iisc-grp-" + g.id;
+				h.textContent = `${["I", "II", "III", "IV", "V"][i]}) ${g.label}`;
+				// the salary section already has its own heading: reuse its spot
+				if (head && g.id === "salary") {
+					head.replaceWith(h);
+				} else {
+					ctrl.before(h);
+				}
+			});
+
+			const nav = document.createElement("aside");
+			nav.className = "iisc-apply-nav";
+			nav.innerHTML =
+				`<div class="iisc-apply-nav-title">${t("Sections")}</div>` +
+				groups.map((g, i) => `<a href="#iisc-grp-${g.id}" data-grp="${g.id}" class="${i === 0 ? "active" : ""}">${esc(g.label)}</a>`).join("") +
+				`<div class="iisc-apply-nav-note">${t("Fields marked")} <b>*</b> ${t("are required.")}</div>`;
+			container.prepend(nav);
+
+			nav.addEventListener("click", (e) => {
+				const a = e.target.closest("a[data-grp]");
+				if (!a) return;
+				e.preventDefault();
+				const target = document.getElementById("iisc-grp-" + a.dataset.grp);
+				if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 110, behavior: "smooth" });
+			});
+
+			// highlight the section in view
+			const spy = () => {
+				let current = groups[0].id;
+				groups.forEach((g) => {
+					const el = document.getElementById("iisc-grp-" + g.id);
+					if (el && el.getBoundingClientRect().top < 200) current = g.id;
+				});
+				nav.querySelectorAll("a[data-grp]").forEach((a) => a.classList.toggle("active", a.dataset.grp === current));
+			};
+			window.addEventListener("scroll", spy, { passive: true });
+			container.classList.add("iisc-apply-ready");
+			return true;
+		};
+		let tries = 0;
+		const waitForm = setInterval(() => {
+			if (buildGroups() || ++tries > 40) clearInterval(waitForm);
+		}, 250);
 		// Friendlier IISc wording on the "Submitted" screen
 		const success = document.querySelector(".success-page");
 		if (success) {
