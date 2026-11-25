@@ -646,8 +646,10 @@ const iiscHome = {
 		const { act, dt, dn } = btn.dataset;
 		const verb = act === "Approve" ? __("approve") : __("reject");
 		frappe.confirm(__("Do you want to {0} {1} {2}?", [verb, __(dt), dn]), () => {
-			frappe
-				.call({ method: "iisc_theme.api.act_on_request", args: { doctype: dt, name: dn, action: act }, freeze: true })
+			// frappe.call returns a jQuery promise: wrap it in a native Promise
+			Promise.resolve(
+				frappe.call({ method: "iisc_theme.api.act_on_request", args: { doctype: dt, name: dn, action: act }, freeze: true })
+			)
 				.then(() => {
 					frappe.show_alert({ message: __("{0} {1}", [__(dt), act === "Approve" ? __("approved") : __("rejected")]), indicator: "green" });
 					const root = document.querySelector(".iisc-app");
@@ -794,8 +796,9 @@ const iiscHome = {
 	load(root) {
 		if (root.iiscLoading) return;
 		root.iiscLoading = true;
-		frappe
-			.call({ method: "iisc_theme.api.get_hr_dashboard", args: { months: this.months }, freeze: false })
+		// frappe.call returns a jQuery promise (no .finally) — wrap it in a
+		// native Promise so .catch/.finally always exist.
+		Promise.resolve(frappe.call({ method: "iisc_theme.api.get_hr_dashboard", args: { months: this.months }, freeze: false }))
 			.then((r) => {
 				const d = r.message;
 				if (!d || !document.body.contains(root)) return;
@@ -832,7 +835,6 @@ const iiscHome = {
 	},
 
 	init() {
-		this.render();
 		// Re-insert whenever Frappe (re)builds the Apps screen or the URL changes
 		// (dock logo / "All apps", breadcrumbs, browser back/forward, Ctrl+K …).
 		// setTimeout (not requestAnimationFrame) so it never stalls in a background tab.
@@ -841,7 +843,7 @@ const iiscHome = {
 			if (timer) return;
 			timer = setTimeout(() => {
 				timer = null;
-				this.render();
+				this.safeRender();
 			}, 30);
 		};
 		new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
@@ -856,8 +858,20 @@ const iiscHome = {
 		});
 		// Last-resort guard: one cheap check a second, only acts on /desk.
 		setInterval(() => {
-			if (this.isAppsScreen() && !document.querySelector("#page-desktop .desktop-wrapper > .iisc-app")) this.render();
+			if (this.isAppsScreen() && !document.querySelector("#page-desktop .desktop-wrapper > .iisc-app")) this.safeRender();
 		}, 1000);
+
+		// First paint last, so the watchers above are always installed
+		// even if this first render hits an error.
+		this.safeRender();
+	},
+
+	safeRender() {
+		try {
+			this.render();
+		} catch (e) {
+			console.error("[iisc_theme] dashboard render failed", e);
+		}
 	},
 };
 
