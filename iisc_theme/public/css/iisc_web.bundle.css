@@ -512,13 +512,14 @@ body.iisc-careers[data-path="jobs"] .page-header-wrapper {
    hero → pill tabs → one panel with a section nav on the left and the form on the right.
    Colours are the IISc navy / teal / orange only. */
 body:is(.iisc-apply, .iisc-job) {
-	--ap-bg: #0f2231;
-	--ap-panel: #163045;
-	--ap-side: #122a3c;
-	--ap-input: #0f2231;
-	--ap-line: rgba(255, 255, 255, 0.09);
-	--ap-text: #eef3f7;
-	--ap-muted: #a7bccb;
+	/* slate surfaces, as on the IISc programme sites */
+	--ap-bg: #0f172a;
+	--ap-panel: #1e293b;
+	--ap-side: #172033;
+	--ap-input: #0f172a;
+	--ap-line: rgba(148, 163, 184, 0.14);
+	--ap-text: #f1f5f9;
+	--ap-muted: #94a3b8;
 	--ap-teal-text: #5cc7d1;
 	background: var(--ap-bg) !important;
 	color: var(--ap-text);
@@ -557,13 +558,51 @@ body:is(.iisc-apply, .iisc-job) .page_content {
 
 /* hero */
 .iisc-apply-hero {
-	padding: 56px 0 74px;
+	position: relative;
+	overflow: hidden;
+	padding: 64px 0 82px;
 	text-align: center;
+	/* photo-style backdrop + left-to-right navy overlay, like the programme-site banners */
 	background:
-		radial-gradient(circle at 15% 20%, rgba(16, 136, 150, 0.35), transparent 45%),
-		radial-gradient(circle at 85% 80%, rgba(238, 80, 48, 0.12), transparent 40%),
-		linear-gradient(180deg, #1b374c 0%, #0f2231 100%);
+		linear-gradient(105deg, rgba(8, 20, 34, 0.94) 0%, rgba(14, 32, 50, 0.78) 34%, rgba(14, 32, 50, 0.4) 64%, rgba(8, 20, 34, 0.2) 100%),
+		url("/assets/iisc_theme/images/careers-hero.jpg") center / cover no-repeat,
+		#0f172a;
 	border-bottom: 1px solid var(--ap-line);
+}
+
+/* decorative rings */
+.iisc-apply-hero::before,
+.iisc-apply-hero::after {
+	content: "";
+	position: absolute;
+	border: 1.5px solid rgba(255, 255, 255, 0.1);
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.iisc-apply-hero::before {
+	width: 420px;
+	height: 420px;
+	right: -120px;
+	top: -160px;
+}
+
+.iisc-apply-hero::after {
+	width: 260px;
+	height: 260px;
+	left: 6%;
+	bottom: -170px;
+	border-color: rgba(92, 199, 209, 0.16);
+}
+
+.iisc-apply-hero > .container {
+	position: relative;
+	z-index: 1;
+}
+
+.iisc-apply-hero h1,
+.iisc-apply-meta {
+	text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
 }
 
 .iisc-apply-eyebrow {
@@ -627,8 +666,8 @@ body:is(.iisc-apply, .iisc-job) .page_content {
 	overflow-x: auto;
 	border: 1px solid var(--ap-line);
 	border-radius: 16px;
-	background: #1b374c;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	background: #1e293b;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 	position: relative;
 	z-index: 2;
 }
