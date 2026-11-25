@@ -511,7 +511,7 @@ body.iisc-careers[data-path="jobs"] .page-header-wrapper {
    Dark layout modelled on the IISc programme sites (btech-ug.iisc.ac.in):
    hero → pill tabs → one panel with a section nav on the left and the form on the right.
    Colours are the IISc navy / teal / orange only. */
-body:is(.iisc-apply, .iisc-job) {
+body.iisc-apply {
 	--ap-bg: #0f2231;
 	--ap-panel: #163045;
 	--ap-side: #122a3c;
@@ -524,34 +524,34 @@ body:is(.iisc-apply, .iisc-job) {
 	color: var(--ap-text);
 }
 
-body:is(.iisc-apply, .iisc-job) .page-breadcrumbs,
-body:is(.iisc-apply, .iisc-job) .page-header-wrapper,
+body.iisc-apply .page-breadcrumbs,
+body.iisc-apply .page-header-wrapper,
 body.iisc-apply #not-saved-badge {
 	display: none !important;
 }
 
 /* clip (not hidden) so the sticky header and section nav keep working */
-html:has(body.iisc-apply, body.iisc-job),
-body:is(.iisc-apply, .iisc-job) {
+html:has(body.iisc-apply),
+body.iisc-apply {
 	overflow-x: clip;
 }
 
 /* signed-in users get Frappe's "My Account" sidebar here — applicants don't need it */
-body:is(.iisc-apply, .iisc-job) .sidebar-column {
+body.iisc-apply .sidebar-column {
 	display: none !important;
 }
 
-body:is(.iisc-apply, .iisc-job) .main-column {
+body.iisc-apply .main-column {
 	flex: 0 0 100%;
 	max-width: 100%;
 }
 
-body:is(.iisc-apply, .iisc-job) .page-content-wrapper main.container {
+body.iisc-apply .page-content-wrapper main.container {
 	max-width: 1180px;
 	padding-bottom: 56px;
 }
 
-body:is(.iisc-apply, .iisc-job) .page_content {
+body.iisc-apply .page_content {
 	max-width: none !important;
 }
 
@@ -751,7 +751,7 @@ body.iisc-apply form.web-form {
 }
 
 /* hero sits right under the header */
-body:is(.iisc-apply, .iisc-job) .page-content-wrapper {
+body.iisc-apply .page-content-wrapper {
 	margin-top: 0 !important;
 }
 
@@ -1177,7 +1177,7 @@ body.iisc-apply .success-page a {
 }
 
 /* website footer on the dark page */
-body:is(.iisc-apply, .iisc-job) .web-footer {
+body.iisc-apply .web-footer {
 	border-top: 1px solid var(--ap-line);
 }
 
@@ -1228,227 +1228,6 @@ body:is(.iisc-apply, .iisc-job) .web-footer {
 
 	body.iisc-apply .web-form-footer {
 		margin: 10px 20px 0;
-	}
-}
-
-
-/* ---------- job detail page: dark layout shared with the application form ---------- */
-.iisc-hero-apply {
-	display: inline-flex;
-	align-items: center;
-	margin-top: 26px;
-	padding: 13px 30px;
-	border-radius: 12px;
-	background: #ee5030;
-	color: #ffffff !important;
-	font-size: 16px;
-	font-weight: 700;
-	text-decoration: none !important;
-	box-shadow: 0 8px 22px rgba(238, 80, 48, 0.35);
-	transition: background 0.15s, transform 0.15s;
-}
-
-.iisc-hero-apply:hover {
-	background: #d8431f;
-	transform: translateY(-1px);
-}
-
-body.iisc-job .page_content .py-12 {
-	padding-top: 0 !important;
-	padding-bottom: 56px !important;
-}
-
-.iisc-jd-panel {
-	display: grid;
-	grid-template-columns: 250px minmax(0, 1fr);
-	align-items: start;
-	border: 1px solid var(--ap-line);
-	border-radius: 20px;
-	background: linear-gradient(90deg, var(--ap-side) 0 250px, var(--ap-line) 250px 251px, var(--ap-panel) 251px);
-	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
-
-body.iisc-job .iisc-apply-nav {
-	grid-row: auto;
-}
-
-.iisc-apply-nav-cta {
-	margin: 18px 22px 0;
-	padding-top: 18px;
-	border-top: 1px solid var(--ap-line);
-}
-
-.iisc-nav-apply {
-	display: block;
-	padding: 11px 0;
-	border-radius: 11px;
-	background: #ee5030;
-	color: #ffffff !important;
-	font-weight: 700;
-	text-align: center;
-	text-decoration: none !important;
-}
-
-.iisc-nav-apply:hover {
-	background: #d8431f;
-}
-
-.iisc-jd-body {
-	min-width: 0;
-	padding: 34px 44px 40px;
-	color: var(--ap-text);
-	font-size: 16px;
-	line-height: 1.7;
-}
-
-.iisc-jd-title {
-	scroll-margin-top: 110px;
-	margin: 0 0 22px;
-	padding-bottom: 16px;
-	border-bottom: 1px solid var(--ap-line);
-	font-family: "Playfair Display", Georgia, serif;
-	font-size: 30px;
-	font-weight: 600;
-	color: #ee5030;
-}
-
-/* info tiles */
-body.iisc-job .iisc-jd-body .mb-md-4.p-md-4 {
-	margin-bottom: 8px !important;
-	padding: 0 !important;
-}
-
-body.iisc-job .iisc-jd-body .mb-md-4.p-md-4 .row {
-	margin: 0 -8px;
-}
-
-body.iisc-job .iisc-jd-body .mb-md-4.p-md-4 .row > [class*="col-"] {
-	margin-bottom: 16px !important;
-	padding: 0 8px;
-}
-
-body.iisc-job .iisc-jd-body .mb-md-4.p-md-4 .flex-row {
-	height: 100%;
-	padding: 14px 16px;
-	border: 1px solid var(--ap-line);
-	border-radius: 14px;
-	background: var(--ap-input);
-}
-
-body.iisc-job .iisc-jd-body .rounded-circle {
-	flex: 0 0 auto;
-	padding: 12px !important;
-	background: rgba(16, 136, 150, 0.2) !important;
-	--icon-stroke: #5cc7d1;
-}
-
-body.iisc-job .iisc-jd-body .rounded-circle svg,
-body.iisc-job .iisc-jd-body .rounded-circle g,
-body.iisc-job .iisc-jd-body .rounded-circle path {
-	stroke: #5cc7d1 !important;
-	--icon-stroke: #5cc7d1;
-}
-
-body.iisc-job .iisc-jd-body .ml-5 {
-	margin-left: 14px !important;
-	min-width: 0;
-	line-height: 1.35;
-}
-
-body.iisc-job .iisc-jd-body .ml-5 > :first-child {
-	color: var(--ap-muted) !important;
-	font-size: 11.5px;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-}
-
-body.iisc-job .iisc-jd-body .ml-5 > :not(:first-child),
-body.iisc-job .iisc-jd-body .ml-5 * {
-	color: #ffffff;
-	font-weight: 700;
-}
-
-body.iisc-job .iisc-jd-body .ml-5 > :first-child * {
-	color: inherit;
-}
-
-/* description */
-body.iisc-job .iisc-jd-body h4.iisc-form-group,
-body.iisc-job .iisc-jd-body h3.iisc-form-group {
-	margin: 34px 0 14px;
-	color: var(--ap-teal-text) !important;
-	font-size: 14px !important;
-	font-weight: 700 !important;
-}
-
-body.iisc-job .iisc-jd-body p,
-body.iisc-job .iisc-jd-body li {
-	color: #d3dee6 !important;
-}
-
-body.iisc-job .iisc-jd-body ul {
-	padding-left: 20px;
-}
-
-body.iisc-job .iisc-jd-body li {
-	margin: 6px 0;
-}
-
-body.iisc-job .iisc-jd-body li::marker {
-	color: #ee5030 !important;
-}
-
-body.iisc-job .iisc-jd-body a {
-	color: var(--ap-teal-text);
-}
-
-body.iisc-job .iisc-jd-body strong,
-body.iisc-job .iisc-jd-body b {
-	color: #ffffff;
-}
-
-/* phone: HRMS's sticky Apply bar on the dark page */
-body.iisc-job #sticky-div > div {
-	background: var(--ap-bg) !important;
-}
-
-body.iisc-job #sticky-div .btn-primary {
-	border: 0;
-	background: #ee5030 !important;
-}
-
-@media (max-width: 991.98px) {
-	.iisc-jd-panel {
-		grid-template-columns: minmax(0, 1fr);
-		background: var(--ap-panel);
-	}
-
-	body.iisc-job .iisc-apply-nav {
-		position: static;
-		display: flex;
-		gap: 4px;
-		padding: 8px;
-		overflow-x: auto;
-		border-bottom: 1px solid var(--ap-line);
-		background: var(--ap-side);
-		border-radius: 20px 20px 0 0;
-	}
-
-	body.iisc-job .iisc-apply-nav-title,
-	body.iisc-job .iisc-apply-nav-cta {
-		display: none;
-	}
-
-	body.iisc-job .iisc-apply-nav a {
-		border-left: 0;
-		border-radius: 10px;
-		padding: 9px 14px;
-		white-space: nowrap;
-	}
-
-	.iisc-jd-body {
-		padding: 24px 20px 30px;
 	}
 }
 
