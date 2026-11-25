@@ -430,12 +430,135 @@ def _celebrations(now, days=30):
 # ---------------------------------------------------------------------------
 # public API
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Demo data — shown automatically while the site has no active employees,
+# so the home page can be reviewed before real HR data is loaded.
+# Set "iisc_dashboard_demo": 0 in site_config.json to turn it off.
+# ---------------------------------------------------------------------------
+def _use_demo(employees):
+	setting = frappe.conf.get("iisc_dashboard_demo")
+	if setting is not None:
+		return bool(int(setting))
+	return not employees.get("total")
+
+
+def _demo(now, months):
+	starts = _month_starts(now, months)
+	labels = _month_labels(starts)
+
+	def cycle(values):
+		return [values[i % len(values)] for i in range(months)]
+
+	days = [add_days(now, -13 + i) for i in range(14)]
+	present, on_leave, absent = [], [], []
+	for i, d in enumerate(days):
+		if d.weekday() == 6:  # Sundays: no attendance
+			present.append(0), on_leave.append(0), absent.append(0)
+			continue
+		present.append([212, 215, 209, 214, 211, 216, 213][i % 7])
+		on_leave.append([14, 11, 15, 12, 13, 9, 12][i % 7])
+		absent.append([6, 4, 7, 5, 6, 3, 5][i % 7])
+
+	def at(days_ahead, hour=10):
+		return f"{add_days(now, days_ahead)} {hour:02d}:15:00"
+
+	return {
+		"demo": True,
+		"employees": {"total": 248, "joined": 6, "relieving": 2, "left": 17},
+		"leaves": {"total": 132, "open": 9, "approved": 110, "rejected": 13},
+		"attendance": {"present": 212, "absent": 8, "on_leave": 14, "present_pct": 85.5},
+		"salary_slips": {"total": 240, "draft": 12, "submitted": 226, "cancelled": 2, "month_label": now.strftime("%b %Y")},
+		"holidays": {
+			"upcoming": 4,
+			"this_month": 1,
+			"holiday_list": "IISc Holidays (Demo)",
+			"next": [
+				{"date": str(add_days(now, 2)), "name": "Kanakadasa Jayanti", "days_left": 2},
+				{"date": str(add_days(now, 30)), "name": "Christmas Day", "days_left": 30},
+				{"date": str(add_days(now, 37)), "name": "New Year's Day", "days_left": 37},
+			],
+		},
+		"overview": [
+			{"label": "Leave Applications", "doctype": "Leave Application", "total": 132, "approved": 110},
+			{"label": "Expense Claims", "doctype": "Expense Claim", "total": 48, "approved": 36},
+			{"label": "Attendance Requests", "doctype": "Attendance Request", "total": 30, "approved": 27},
+			{"label": "Shift Requests", "doctype": "Shift Request", "total": 12, "approved": 8},
+		],
+		"series": {
+			"labels": labels,
+			"datasets": [
+				{"name": "Leave Applications", "values": cycle([18, 22, 15, 25, 28, 24, 20, 26, 19, 23, 27, 21])},
+				{"name": "Expense Claims", "values": cycle([6, 8, 7, 9, 10, 8, 7, 11, 9, 8, 10, 12])},
+				{"name": "Attendance Requests", "values": cycle([3, 5, 4, 6, 5, 7, 4, 6, 5, 3, 6, 5])},
+			],
+		},
+		"pending": {
+			"total": 14,
+			"by_doctype": {"Leave Application": 9, "Expense Claim": 3, "Attendance Request": 1, "Shift Request": 1},
+			"items": [
+				{"doctype": "Leave Application", "name": "DEMO-LEAVE-1", "employee_name": "Dr. Aravind Kumar", "department": "Aerospace Engineering", "type": "Casual Leave", "details": "3 Days (from next Monday)", "creation": at(0, 10)},
+				{"doctype": "Expense Claim", "name": "DEMO-EXP-1", "employee_name": "Priya Sharma", "department": "Centre for BioSystems", "type": "Expense Claim", "details": "₹ 14,250.00 (Conference travel)", "creation": at(-1, 15)},
+				{"doctype": "Shift Request", "name": "DEMO-SHIFT-1", "employee_name": "Rajesh Menon", "department": "SERC", "type": "Shift Request", "details": "Night Shift → Day Shift", "creation": at(-2, 9)},
+				{"doctype": "Attendance Request", "name": "DEMO-ATT-1", "employee_name": "Kavya Iyer", "department": "Physics", "type": "Attendance Regularization", "details": "On Duty (Field work)", "creation": at(-3, 11)},
+				{"doctype": "Leave Application", "name": "DEMO-LEAVE-2", "employee_name": "Mohammed Faisal", "department": "Library", "type": "Earned Leave", "details": "5 Days (next month)", "creation": at(-4, 16)},
+			],
+		},
+		"notice": {
+			"name": None,
+			"title": "Annual Tax Declaration",
+			"text": "All faculty and staff must submit their IT investment proofs for FY 2026-27 before 15 December.",
+		},
+		"insights": {
+			"departments": {
+				"labels": ["Physics", "Aerospace Engineering", "Computational & Data Sciences", "Biochemistry", "Civil Engineering", "Administration", "J.R.D. Tata Library", "Others"],
+				"values": [42, 36, 30, 28, 24, 40, 12, 36],
+			},
+			"workforce": {"labels": ["Full-time", "Contract", "Probation", "Intern", "Part-time"], "values": [180, 34, 14, 12, 8]},
+			"gender": {"labels": ["Male", "Female", "Other"], "values": [150, 94, 4]},
+			"attendance_trend": {
+				"labels": [d.strftime("%d %b") for d in days],
+				"datasets": [
+					{"name": "Present", "values": present},
+					{"name": "On Leave", "values": on_leave},
+					{"name": "Absent", "values": absent},
+				],
+			},
+			"leave_types": {"labels": ["Earned Leave", "Casual Leave", "Sick Leave", "Compensatory Off", "Leave Without Pay"], "values": [210, 120, 64, 22, 8]},
+			"payroll": {
+				"labels": labels,
+				"currency": "INR",
+				"datasets": [
+					{"name": "Gross Pay", "values": [21_800_000 + 180_000 * i for i in range(months)]},
+					{"name": "Net Pay", "values": [18_200_000 + 150_000 * i for i in range(months)]},
+				],
+				"total_gross": sum(21_800_000 + 180_000 * i for i in range(months)),
+			},
+			"movement": {
+				"labels": labels,
+				"datasets": [
+					{"name": "Joined", "values": cycle([4, 6, 3, 8, 5, 6, 2, 7, 4, 5, 9, 3])},
+					{"name": "Relieved", "values": cycle([2, 1, 3, 2, 4, 2, 1, 3, 2, 2, 1, 3])},
+				],
+			},
+		},
+		"celebrations": [
+			{"employee": None, "employee_name": "Dr. Aravind Kumar", "department": "Aerospace Engineering", "kind": "birthday", "date": str(now), "days_left": 0, "years": None},
+			{"employee": None, "employee_name": "Priya Sharma", "department": "Centre for BioSystems", "kind": "anniversary", "date": str(add_days(now, 4)), "days_left": 4, "years": 10},
+			{"employee": None, "employee_name": "Rajesh Menon", "department": "SERC", "kind": "birthday", "date": str(add_days(now, 12)), "days_left": 12, "years": None},
+		],
+		"unread_notifications": 0,
+		"today": str(now),
+	}
+
+
 @frappe.whitelist()
 def get_hr_dashboard(months=6):
 	"""Data for the IISc HR home on the Desk Apps screen."""
 	months = 12 if str(months) == "12" else 6
 	now = getdate(today())
 	employees, leaves, attendance, salary_slips, holidays = _cards(now)
+	if _use_demo(employees):
+		return _demo(now, months)
 	pending = _pending()
 	unread = None
 	if frappe.db.exists("DocType", "Notification Log"):
