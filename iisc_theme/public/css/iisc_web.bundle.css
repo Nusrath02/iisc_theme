@@ -949,6 +949,162 @@ body.iisc-apply .form-message {
 	border-radius: 10px;
 }
 
+/* pop-ups (missing values, upload, messages): same dark panel as the form */
+body.iisc-apply .modal-backdrop.show {
+	opacity: 0.7;
+	background: #07131c;
+}
+
+body.iisc-apply .modal-content {
+	overflow: hidden;
+	border: 1px solid var(--ap-line) !important;
+	border-radius: 18px !important;
+	background: var(--ap-panel) !important;
+	color: var(--ap-text) !important;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.iisc-apply .modal-header,
+body.iisc-apply .modal-footer {
+	border-color: var(--ap-line) !important;
+	background: transparent !important;
+}
+
+body.iisc-apply .modal-header {
+	padding: 18px 22px;
+}
+
+body.iisc-apply .modal-title {
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: 22px;
+	font-weight: 600;
+	color: #ee5030 !important;
+}
+
+body.iisc-apply .modal-header .close,
+body.iisc-apply .modal-header .btn-modal-close {
+	color: #ffffff !important;
+	opacity: 0.7;
+	--icon-stroke: #ffffff;
+}
+
+body.iisc-apply .modal-header .close:hover {
+	opacity: 1;
+}
+
+body.iisc-apply .modal-header .close svg,
+body.iisc-apply .modal-header .close use {
+	stroke: #ffffff;
+	fill: #ffffff;
+}
+
+body.iisc-apply .modal-body,
+body.iisc-apply .modal-body .msgprint,
+body.iisc-apply .modal-body p,
+body.iisc-apply .modal-body li {
+	color: var(--ap-text) !important;
+	font-size: 15px;
+}
+
+body.iisc-apply .modal-body .msgprint li {
+	margin: 4px 0;
+	font-weight: 600;
+}
+
+body.iisc-apply .modal-body .msgprint li::marker {
+	color: #ee5030;
+}
+
+body.iisc-apply .modal-body a {
+	color: var(--ap-teal-text) !important;
+}
+
+/* upload dialog */
+body.iisc-apply .file-upload-area {
+	border: 1.5px dashed rgba(92, 199, 209, 0.45) !important;
+	border-radius: 14px !important;
+	background: var(--ap-input) !important;
+	color: var(--ap-muted) !important;
+}
+
+body.iisc-apply .file-upload-area .text-center,
+body.iisc-apply .file-upload-area .text-extra-muted,
+body.iisc-apply .file-upload-area .text-muted {
+	color: var(--ap-muted) !important;
+}
+
+body.iisc-apply .btn-file-upload,
+body.iisc-apply .btn-file-upload .mt-1 {
+	color: #dbe5ec !important;
+	font-weight: 600;
+}
+
+body.iisc-apply .btn-file-upload svg {
+	border-radius: 50%;
+	background: rgba(16, 136, 150, 0.25) !important;
+	--icon-stroke: #5cc7d1;
+	stroke: #5cc7d1;
+}
+
+body.iisc-apply .btn-file-upload:hover svg {
+	background: #108896 !important;
+	--icon-stroke: #ffffff;
+	stroke: #ffffff;
+}
+
+body.iisc-apply .file-preview,
+body.iisc-apply .file-preview-container .file-preview {
+	border-color: var(--ap-line) !important;
+	background: var(--ap-input) !important;
+	color: var(--ap-text) !important;
+}
+
+body.iisc-apply .modal .form-control,
+body.iisc-apply .modal input,
+body.iisc-apply .modal textarea {
+	border: 1px solid rgba(255, 255, 255, 0.12) !important;
+	border-radius: 10px;
+	background: var(--ap-input) !important;
+	color: var(--ap-text) !important;
+}
+
+/* dialog buttons: teal primary, ghost secondary */
+body.iisc-apply .modal-footer .btn {
+	min-height: 38px;
+	padding: 0 18px;
+	border-radius: 10px;
+	font-weight: 700;
+}
+
+body.iisc-apply .modal-footer .btn-primary {
+	--bt-fill-bg: #108896;
+	--bt-fg: #ffffff;
+	border: 0 !important;
+	background: #108896 !important;
+	color: #ffffff !important;
+}
+
+body.iisc-apply .modal-footer .btn-primary:hover {
+	background: #0d7480 !important;
+}
+
+body.iisc-apply .modal-footer .btn-secondary {
+	--bt-fill-bg: transparent;
+	--bt-fg: #dbe5ec;
+	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	background: transparent !important;
+	color: #dbe5ec !important;
+}
+
+body.iisc-apply .modal-footer .btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.iisc-apply .modal-footer .btn-secondary .es-button__label,
+body.iisc-apply .modal-footer .btn-primary .es-button__label {
+	color: inherit !important;
+}
+
 /* "Submitted" screen */
 body.iisc-apply .success-page {
 	max-width: 640px;
