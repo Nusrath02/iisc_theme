@@ -8,7 +8,9 @@
 /* Hide Frappe's own content while ours is shown: workspace body (editor
    blocks, onboarding) and the standard Dashboard page (number cards, charts) */
 .layout-main-section.iisc-mod-on > :not(.iisc-mod),
-.page-content.iisc-mod-on > :not(.iisc-mod) {
+.layout-main-section:has(> .iisc-mod) > :not(.iisc-mod),
+.page-content.iisc-mod-on > :not(.iisc-mod),
+.page-content:has(> .iisc-mod) > :not(.iisc-mod) {
 	display: none !important;
 }
 
