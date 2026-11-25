@@ -168,6 +168,23 @@ function iiscCareers() {
 			renderSamples();
 			grid.addEventListener("click", (e) => e.target.closest(".iisc-job-sample") && notice());
 			filtersCol && filtersCol.addEventListener("change", (e) => e.target.matches("[data-sample-filter]") && renderSamples());
+			// "Clear All" (desktop sidebar and mobile drawer): reset the sample
+			// filters and search here instead of HRMS's server-side reset.
+			document.addEventListener(
+				"click",
+				(e) => {
+					const clear = e.target.closest('[name="clear-filters"]');
+					if (!clear) return;
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					document.querySelectorAll("[data-sample-filter]").forEach((c) => (c.checked = false));
+					const box = document.getElementById("search-box");
+					if (box) box.value = "";
+					if (location.search) history.replaceState(null, "", location.pathname);
+					renderSamples();
+				},
+				true
+			);
 		} else if (ctx) {
 			fillStats({ openings: ctx.openings, departments: ctx.departments, vacancies: ctx.vacancies || ctx.openings });
 		}
