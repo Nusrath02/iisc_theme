@@ -211,11 +211,8 @@ const iiscHome = {
 		return `
 			<aside class="iisc-side">
 				<div class="iisc-side-brand">
-					<span class="iisc-side-logo"><img src="/assets/iisc_theme/images/iisc-emblem.png" alt="IISc"></span>
-					<span class="iisc-side-brand-text">
-						<span class="iisc-side-brand-title">${__("IISc Desk")} ${hrVersion ? `<span class="iisc-side-ver">v${iiscEsc(hrVersion)}</span>` : ""}</span>
-						<span class="iisc-side-brand-sub">${__("Indian Institute of Science")}</span>
-					</span>
+					<img class="iisc-side-fulllogo" src="/assets/iisc_theme/images/iisc-logo.png" alt="Indian Institute of Science">
+					<span class="iisc-side-brand-sub">${__("HR & ERP Desk")} ${hrVersion ? `<span class="iisc-side-ver">v${iiscEsc(hrVersion)}</span>` : ""}</span>
 				</div>
 				<div class="iisc-side-scroll">
 					<div class="iisc-side-section">${__("My Work")}</div>

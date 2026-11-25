@@ -181,7 +181,7 @@
 }
 
 .iisc-footer img {
-	height: 26px;
+	height: 34px;
 	width: auto;
 }
 
@@ -550,10 +550,19 @@ body {
 
 .iisc-side-brand {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: flex-start;
 	gap: 10px;
-	padding: 0 6px 16px;
+	padding: 2px 4px 16px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Full IISc logo (emblem + English + Hindi name), as on iisc.ac.in */
+.iisc-side-fulllogo {
+	display: block;
+	width: 100%;
+	max-width: 224px;
+	height: auto;
 }
 
 .iisc-side-logo {
@@ -601,8 +610,14 @@ body {
 }
 
 .iisc-side-brand-sub {
-	font-size: 12px;
-	color: rgba(255, 255, 255, 0.65);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.7);
 }
 
 .iisc-side-scroll {
