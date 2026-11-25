@@ -334,7 +334,7 @@ function iiscCareers() {
 	const card = (j) => `
 		<div class="col-md-6 mb-6">
 			<div class="card border h-100 flex flex-col iisc-job iisc-job-sample" role="button" tabindex="0">
-				<div class="iisc-jd-body">
+				<div class="iisc-job-body">
 					<div class="iisc-job-top">
 						<h4 class="jobs-page">${esc(j.title)}</h4>
 						<span class="badge ${badge(j.type)}">${esc(t(j.type))}</span>
