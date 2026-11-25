@@ -411,6 +411,58 @@ body.iisc-footer-on .main-section {
 	color: #ffffff;
 }
 
+/* --- 6e. Native <select> popups (form Select fields, list/report filters).
+   Chrome/Edge 135+ allow styling the option list with appearance: base-select;
+   Frappe already draws the field itself and its own arrow, so the field keeps
+   its exact size — only the popup changes to the IISc menu. Other browsers
+   keep the OS list. --- */
+@supports (appearance: base-select) {
+	select.form-control:not([multiple]),
+	select.form-control:not([multiple])::picker(select) {
+		appearance: base-select !important;
+	}
+
+	select.form-control:not([multiple])::picker-icon {
+		display: none;
+	}
+
+	select.form-control:not([multiple])::picker(select) {
+		margin-top: 4px;
+		padding: 6px;
+		border: 0;
+		border-radius: 10px;
+		background: var(--iisc-teal);
+		box-shadow: 0 12px 28px rgba(16, 24, 40, 0.18);
+	}
+
+	select.form-control:not([multiple]) option {
+		padding: 8px 12px;
+		border-radius: 7px;
+		background: transparent;
+		color: #ffffff;
+		font-size: 14px;
+	}
+
+	select.form-control:not([multiple]) option:hover,
+	select.form-control:not([multiple]) option:focus-visible {
+		background: var(--iisc-navy);
+		outline: none;
+	}
+
+	select.form-control:not([multiple]) option:checked {
+		background: rgba(255, 255, 255, 0.18);
+		font-weight: 700;
+	}
+
+	select.form-control:not([multiple]) option:checked:hover {
+		background: var(--iisc-navy);
+	}
+
+	select.form-control:not([multiple]) option::checkmark {
+		display: none;
+	}
+}
+
 /* =====================================================================
    7. TYPOGRAPHY — IISc website (measured on iisc.ac.in)
    Body: Source Sans Pro, 15px. Headings: Playfair Display, #EE5030, 400.

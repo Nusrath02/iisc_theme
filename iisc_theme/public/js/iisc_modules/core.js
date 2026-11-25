@@ -8,6 +8,7 @@
 
 const ICONS = {
 	plus: '<path d="M12 5v14M5 12h14"/>',
+	chevron: '<path d="M6 9l6 6 6-6"/>',
 	calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
 	users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
 	clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
@@ -464,11 +465,73 @@ const iiscModules = {
 		});
 	},
 
+	// Native <select> popups are drawn by the OS (blue highlight) and can't be
+	// themed. Every select.iisc-select (home + module pages) gets an IISc menu
+	// instead; the real <select> stays hidden underneath and still fires change.
+	enhanceSelects() {
+		document.querySelectorAll("select.iisc-select:not([data-iisc-dd])").forEach((sel) => {
+			sel.dataset.iiscDd = "1";
+			const wrap = document.createElement("div");
+			wrap.className = "iisc-dd";
+			sel.parentNode.insertBefore(wrap, sel);
+			wrap.appendChild(sel);
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = "iisc-dd-btn";
+			btn.setAttribute("aria-haspopup", "listbox");
+			btn.setAttribute("aria-expanded", "false");
+			const menu = document.createElement("div");
+			menu.className = "iisc-dd-menu";
+			menu.setAttribute("role", "listbox");
+			wrap.append(btn, menu);
+
+			const paint = () => {
+				const opt = sel.options[sel.selectedIndex];
+				btn.innerHTML = `<span>${esc(opt ? opt.text : "")}</span>${svg("chevron", 14)}`;
+				menu.innerHTML = [...sel.options]
+					.map(
+						(o, i) =>
+							`<button type="button" role="option" class="iisc-dd-item" data-i="${i}" aria-selected="${o.selected}">${esc(o.text)}</button>`
+					)
+					.join("");
+			};
+			const close = () => {
+				wrap.classList.remove("open");
+				btn.setAttribute("aria-expanded", "false");
+			};
+			paint();
+			btn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				const open = !wrap.classList.contains("open");
+				document.querySelectorAll(".iisc-dd.open").forEach((d) => d.classList.remove("open"));
+				wrap.classList.toggle("open", open);
+				btn.setAttribute("aria-expanded", String(open));
+			});
+			menu.addEventListener("click", (e) => {
+				const item = e.target.closest(".iisc-dd-item");
+				if (!item) return;
+				e.stopPropagation();
+				sel.selectedIndex = Number(item.dataset.i);
+				sel.dispatchEvent(new Event("change", { bubbles: true }));
+				paint();
+				close();
+			});
+			sel.addEventListener("change", paint);
+			document.addEventListener("click", close);
+			document.addEventListener("keydown", (e) => e.key === "Escape" && close());
+		});
+	},
+
 	safeRender() {
 		try {
 			this.render();
 		} catch (e) {
 			console.error("[iisc_theme] module dashboard render failed", e);
+		}
+		try {
+			this.enhanceSelects();
+		} catch (e) {
+			console.error("[iisc_theme] select enhance failed", e);
 		}
 	},
 
