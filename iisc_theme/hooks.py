@@ -19,8 +19,8 @@ web_include_css = ["iisc_theme.bundle.css", "iisc_web.bundle.css"]
 web_include_js = ["iisc_web.bundle.js"]
 
 website_context = {
-	"favicon": "/assets/iisc_theme/images/favicon.png",
-	"splash_image": "/assets/iisc_theme/images/iisc-emblem-tile.png",
+	"favicon": "/files/fsid-logo.png",
+	"splash_image": "/files/fsid-logo.png",
 }
 
 # Theme-only app: no Apps-screen icon needed.

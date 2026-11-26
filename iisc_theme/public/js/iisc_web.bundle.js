@@ -38,9 +38,9 @@ function iiscCareers() {
 	// ---------- header ----------
 	const brand = document.querySelector(".navbar .navbar-brand");
 	if (brand) {
-		// Same lock-up as the IISc programme sites: emblem on a white tile + two-line name
-		brand.innerHTML = `<img class="iisc-web-emblem" src="/assets/iisc_theme/images/iisc-emblem-light.png" alt="">
-			<span class="iisc-web-brand"><b>${t("Indian Institute of Science")}</b><small>${t("Bengaluru")}</small></span>`;
+		// FSID, IISc lock-up: gold mark + two-line name
+		brand.innerHTML = `<img class="iisc-web-emblem" src="/files/fsid-logo.png" alt="FSID, IISc">
+			<span class="iisc-web-brand"><b>FSID, IISc</b><small>${t("Foundation for Science Innovation and Development")}</small></span>`;
 	}
 
 	// ---------- hero (list page only) ----------
@@ -66,7 +66,7 @@ function iiscCareers() {
 
 	// ---------- footer ----------
 	const powered = document.querySelector(".web-footer .footer-powered");
-	if (powered) powered.innerHTML = `<span>© ${new Date().getFullYear()} ${t("Indian Institute of Science, Bengaluru")} | ${t("Design")}: ITChamps</span>`;
+	if (powered) powered.innerHTML = `<span>© ${new Date().getFullYear()} ${t("Foundation for Science Innovation and Development (FSID), IISc")} | ${t("Design")}: ITChamps</span>`;
 
 	// Display clean-up: full institute name instead of the company code, and
 	// department names without the company abbreviation ("Physics - I").

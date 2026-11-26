@@ -180,8 +180,17 @@
 	box-sizing: border-box;
 }
 
+.iisc-footer-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
 .iisc-footer img {
-	height: 34px;
+	height: 30px;
 	width: auto;
 }
 
@@ -557,12 +566,36 @@ body {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Full IISc logo (emblem + English + Hindi name), as on iisc.ac.in */
-.iisc-side-fulllogo {
-	display: block;
-	width: 100%;
-	max-width: 224px;
-	height: auto;
+/* FSID, IISc lock-up: gold mark + name */
+.iisc-side-lockup {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.iisc-side-mark {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	object-fit: contain;
+}
+
+.iisc-side-name {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.2;
+}
+
+.iisc-side-name b {
+	font-size: 19px;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.iisc-side-name small {
+	margin-top: 2px;
+	font-size: 11.5px;
+	color: rgba(255, 255, 255, 0.72);
 }
 
 .iisc-side-logo {
@@ -582,10 +615,13 @@ body {
 	object-fit: contain;
 }
 
-/* Dock: IISc emblem in place of the Frappe HR app logo ("All apps") */
+/* Dock: FSID, IISc mark in place of the Frappe HR app logo ("All apps") */
 #desk-dock .dock-logo .header-logo img {
-	content: url("/assets/iisc_theme/images/iisc-emblem-tile.png");
+	content: url("/files/fsid-logo.png");
+	object-fit: contain;
+	padding: 3px;
 	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.06);
 }
 
 .iisc-side-brand-text {
