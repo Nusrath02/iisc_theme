@@ -615,9 +615,10 @@ body {
 	object-fit: contain;
 }
 
-/* Dock: FSID, IISc mark in place of the Frappe HR app logo ("All apps") */
+/* Dock: FSID, IISc mark in place of the Frappe HR app logo ("All apps").
+   The src is set from JS (iisc_theme.bundle.js): a url() to /files/... here
+   breaks the asset build, because esbuild tries to resolve it. */
 #desk-dock .dock-logo .header-logo img {
-	content: url("/files/fsid-logo.png");
 	object-fit: contain;
 	padding: 3px;
 	border-radius: 8px;

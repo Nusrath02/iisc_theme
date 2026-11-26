@@ -878,3 +878,24 @@ $(document).ready(() =>
 		iiscHome.init();
 	}, 200)
 );
+
+// ---------------------------------------------------------------------
+// Dock icon: FSID, IISc mark instead of the Frappe HR logo. Done here, not
+// in CSS, because a url() to /files/... breaks the esbuild asset build.
+(function iiscDockLogo() {
+	const LOGO = "/files/fsid-logo.png";
+	const apply = () => {
+		document.querySelectorAll("#desk-dock .dock-logo .header-logo img").forEach((img) => {
+			if (img.getAttribute("src") !== LOGO) {
+				img.setAttribute("src", LOGO);
+				img.removeAttribute("srcset");
+			}
+		});
+	};
+	const start = () => {
+		apply();
+		new MutationObserver(apply).observe(document.body, { childList: true, subtree: true });
+	};
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+	else start();
+})();
